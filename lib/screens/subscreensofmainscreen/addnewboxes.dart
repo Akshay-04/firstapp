@@ -23,8 +23,12 @@ class _addNewBoxState extends State<addNewBox> {
     var subscription = flutterBlue.scanResults.listen((results) {
       // do something with scan results
       for (ScanResult r in results) {
-        print('${r.device.name} found! rssi: ${r.rssi}');
-        Provider.of<box>(context,listen: false).addBox(r.device);
+        if(r.device.name.isNotEmpty){
+          if (!Provider.of<box>(context).checkrepeat(r.device)) {
+            print('${r.device.name} found! rssi: ${r.rssi}');
+            Provider.of<box>(context, listen: false).addBox(r.device);
+        }
+        }
       }
     });
 // Stop scanning
@@ -51,9 +55,7 @@ class _addNewBoxState extends State<addNewBox> {
       children: <Widget>[
         if (listofnewboxes.isNotEmpty)
           ...listofnewboxes.map((element) {
-            return contentInBox(
-            element
-            );
+            if (!element.name.isEmpty) return contentInBox(element);
           }).toList()
         else
           Text('No new device available')
