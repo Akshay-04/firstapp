@@ -1,9 +1,21 @@
+import 'dart:convert';
+
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:wardlabs/providerclasses/addedboxes.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-class deviceInformation extends StatelessWidget {
+import '../screens/subscreensofmainscreen/addnewboxes.dart';
+
+class deviceInformation extends StatefulWidget {
   static String routeName = '/deviceInformation';
+
+
+  @override
+  _deviceInformationState createState() => _deviceInformationState();
+}
+
+class _deviceInformationState extends State<deviceInformation> {
+    List<BluetoothService> _services;
   Widget build(BuildContext context) {
     bool _paired(BluetoothDevice device) {
       List<BluetoothDevice> temp =
@@ -16,35 +28,58 @@ class deviceInformation extends StatelessWidget {
       return false;
     }
 
-    final args =
-        ModalRoute.of(context).settings.arguments as BluetoothDevice;
-    String name = args.name;
+  
+
+    final args = ModalRoute.of(context).settings.arguments
+        as Map<String,Object>;
+    BluetoothDevice thisdevice = args['selecteddevice'];
+    List<BluetoothService> _services=args['services'];
+    var r=_services[2].characteristics[0];
     return Scaffold(
         appBar: AppBar(
-          title: Text(name),
+          title: Text(thisdevice.name),
         ),
         body: Container(
             child: Card(
               child: Column(children: <Widget>[
-                if (!_paired(args))
+                if (!_paired(thisdevice))
                   RaisedButton(
                     onPressed: () {
-                      Provider.of<pairedboxes>(context,listen:false).pairnewbox(args);
+                      Provider.of<pairedboxes>(context, listen: false)
+                          .pairnewbox(thisdevice);
                       Navigator.pop(context);
                     },
                     child: Text('Pair'),
                   )
                 else
                   RaisedButton(
+                    child:Text('Unpair'),
                     onPressed: () {
-                      Provider.of<pairedboxes>(context,listen: false).unpairbox(args);
+                      Provider.of<pairedboxes>(context, listen: false)
+                          .unpairbox(thisdevice);
                       Navigator.pop(context);
-                    },
-                    child: Text('Unpair'),
-                  )
+                    }),
+                    if (_paired(thisdevice))
+                      RaisedButton(
+                      child: Text('On'),
+                      onPressed: () {
+                    _services[2].characteristics[0].write(utf8
+                                 .encode('ON'));
+                    } 
+                    ,),
+                    if (_paired(thisdevice))
+                     RaisedButton(
+                      child: Text('Off'),
+                      onPressed: () {
+                    _services[2].characteristics[0].write(utf8
+                                 .encode('OFF'));
+                    } 
+                    ,)
+                  
               ]),
               elevation: 20,
             ),
-            width: double.infinity));
+            width: double.infinity)
+            );
   }
 }

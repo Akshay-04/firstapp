@@ -5,66 +5,63 @@ import 'package:flutter/material.dart';
 import '../../providerclasses/addedboxes.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
+final FlutterBlue flutterBlue = FlutterBlue.instance;
+
 class addNewBox extends StatefulWidget {
+  final List<BluetoothDevice> devicesList = new List<BluetoothDevice>();
+
   @override
   _addNewBoxState createState() => _addNewBoxState();
 }
 
 class _addNewBoxState extends State<addNewBox> {
-  Color boxcolor = Colors.blue;
-  FlutterBlue flutterBlue = FlutterBlue.instance;
+  _addDeviceTolist(final BluetoothDevice device) {
+    if (!widget.devicesList.contains(device)) {
+      setState(() {
+        widget.devicesList.add(device);
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-    // Start scanning
-    flutterBlue.startScan(timeout: Duration(seconds: 4));
-
-// Listen to scan results
-    var subscription = flutterBlue.scanResults.listen((results) {
-      // do something with scan results
-      for (ScanResult r in results) {
-        if(r.device.name.isNotEmpty){
-          if (!Provider.of<box>(context).checkrepeat(r.device)) {
-            print('${r.device.name} found! rssi: ${r.rssi}');
-            Provider.of<box>(context, listen: false).addBox(r.device);
-        }
+    flutterBlue.connectedDevices
+        .asStream()
+        .listen((List<BluetoothDevice> devices) {
+      for (BluetoothDevice device in devices) {
+        _addDeviceTolist(device);
+      }
+    });
+    flutterBlue.scanResults.listen((List<ScanResult> results) {
+      for (ScanResult result in results) {
+        if (result.device.name.isNotEmpty) {
+          _addDeviceTolist(result.device);
         }
       }
     });
-// Stop scanning
-    flutterBlue.stopScan();
+    flutterBlue.startScan();
   }
 
-  Widget build(BuildContext context) {
-    List<BluetoothDevice> listofalreadypairedboxes =
-        Provider.of<pairedboxes>(context).getListOfpairedBoxes;
-
-    List<BluetoothDevice> listofnewboxes =
-        Provider.of<box>(context).getlistofnewboxes(listofalreadypairedboxes);
-    listofnewboxes.removeWhere((element) {
-      for (int i = 0; i < listofalreadypairedboxes.length; i++) {
-        if (element.id == listofalreadypairedboxes[i].id) {
-          return true;
-        }
-      }
-      return false;
-    });
-    return Container(
-        child: GridView(
+  GridView _buildListViewOfDevices() {
+    widget.devicesList.removeWhere((element) =>
+        Provider.of<pairedboxes>(context).checkduplicateboxes(element));
+    return GridView.builder(
+      itemCount: widget.devicesList.length,
+      itemBuilder: (context, index) {
+        BluetoothDevice q = widget.devicesList[index];
+        return contentInBox(q);
+      },
       padding: EdgeInsets.all(25),
-      children: <Widget>[
-        if (listofnewboxes.isNotEmpty)
-          ...listofnewboxes.map((element) {
-            if (!element.name.isEmpty) return contentInBox(element);
-          }).toList()
-        else
-          Text('No new device available')
-      ],
       gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
           maxCrossAxisExtent: 200,
           childAspectRatio: 4 / 3,
           crossAxisSpacing: 30,
           mainAxisSpacing: 30),
-    ));
+    );
+  }
+
+  Widget build(BuildContext context) {
+    return _buildListViewOfDevices();
   }
 }
