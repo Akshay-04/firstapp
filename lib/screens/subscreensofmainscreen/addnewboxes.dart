@@ -46,6 +46,7 @@ class _addNewBoxState extends State<addNewBox> {
   GridView _buildListViewOfDevices() {
     widget.devicesList.removeWhere((element) =>
         Provider.of<pairedboxes>(context).checkduplicateboxes(element));
+        
     return GridView.builder(
       itemCount: widget.devicesList.length,
       itemBuilder: (context, index) {

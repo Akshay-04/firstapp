@@ -29,11 +29,9 @@ class pairedboxes with ChangeNotifier {
   bool checkduplicateboxes(BluetoothDevice b) {
     for (int i = 0; i < listofpairedboxes.length; i++) {
       if (b.id == listofpairedboxes[i].id) {
-         notifyListeners();
         return true;
       }
     }
-     notifyListeners();
     return false;
   }
 }
