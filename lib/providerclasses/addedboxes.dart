@@ -1,16 +1,43 @@
+import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'dart:convert';
+
+const String firebaseurl = 'https://wardlabs.firebaseio.com/paireddevices.json';
+
+class MyBox {
+  String id;
+  DeviceIdentifier deviceid;
+  MyBox(this.id, this.deviceid);
+   
+}
 
 class pairedboxes with ChangeNotifier {
   List<BluetoothDevice> listofpairedboxes = [];
-
+  List<MyBox> paireddeviceid = [];
   get getListOfpairedBoxes {
     return [...listofpairedboxes];
   }
+  getdeviceidofbox(String id)
+  {
+    for(int i=0;i<paireddeviceid.length;i++)
+    {
+    if(id==paireddeviceid[i].id)
+    {
+      return paireddeviceid[i].deviceid;
+    }
+    }
+  }
 
-  pairnewbox(BluetoothDevice device) {
-    listofpairedboxes.add(device);
-    notifyListeners();
+  Future<void> pairnewbox(BluetoothDevice device) {
+    print('here1');
+    return http.post(firebaseurl, body: json.encode({'device': device.toString()}))
+        .then((value) {
+      paireddeviceid.add(MyBox(json.decode(value.body)['Name'], device.id));
+      print('here2');
+      listofpairedboxes.add(device);
+      notifyListeners();
+    });
   }
 
   void unpairbox(BluetoothDevice deletebox) {

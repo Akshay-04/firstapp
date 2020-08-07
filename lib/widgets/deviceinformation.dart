@@ -9,12 +9,13 @@ import '../screens/subscreensofmainscreen/addnewboxes.dart';
 
 class deviceInformation extends StatefulWidget {
   static String routeName = '/deviceInformation';
-
+ 
   @override
   _deviceInformationState createState() => _deviceInformationState();
 }
 
 class _deviceInformationState extends State<deviceInformation> {
+   bool isLoading = false;
   Widget build(BuildContext context) {
     bool _paired(BluetoothDevice device) {
       List<BluetoothDevice> temp =
@@ -36,14 +37,26 @@ class _deviceInformationState extends State<deviceInformation> {
           title: Text(thisdevice.name),
         ),
         body: Container(
-            child: Card(
+                  child:
+                  isLoading?
+                    Center(child: CircularProgressIndicator())
+                :
+                   Card(
               child: Column(children: <Widget>[
-                if (!_paired(thisdevice))
+                 if(!_paired(thisdevice))
                   RaisedButton(
                     onPressed: () {
+                      setState(() {
+                        isLoading = true;
+                      });
                       Provider.of<pairedboxes>(context, listen: false)
-                          .pairnewbox(thisdevice);
-                      Navigator.pop(context);
+                          .pairnewbox(thisdevice)
+                          .then((_) {
+                        setState(() {
+                          isLoading = false;
+                        });
+                        Navigator.pop(context);
+                      });
                     },
                     child: Text('Pair'),
                   )
@@ -51,8 +64,13 @@ class _deviceInformationState extends State<deviceInformation> {
                   RaisedButton(
                       child: Text('Unpair'),
                       onPressed: () {
+                        setState(() {
+                          isLoading = true;
+                        });
+
                         Provider.of<pairedboxes>(context, listen: false)
                             .unpairbox(thisdevice);
+
                         Navigator.pop(context);
                       }),
                 if (_paired(thisdevice))
@@ -72,7 +90,10 @@ class _deviceInformationState extends State<deviceInformation> {
                   )
               ]),
               elevation: 20,
-            ),
-            width: double.infinity));
+                   ),
+            width: double.infinity
+            
+            )
+            );
   }
 }

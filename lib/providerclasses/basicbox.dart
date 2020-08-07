@@ -13,7 +13,6 @@ class availablebluetoothdevices {
     flutterBlue.scanResults.listen((event) {
       for (ScanResult result in event) {
         var t = result.device.id;
-        print('result: $t');
         temp.add(result.device);
       }
     });
