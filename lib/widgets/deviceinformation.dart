@@ -77,7 +77,7 @@ class _deviceInformationState extends State<deviceInformation> {
                           onPressed: () {
                             print(_services);
                             try {
-                              _services[0]
+                              _services[2]
                                   .characteristics[0]
                                   .write(utf8.encode('ON'));
                             } catch (error) {
@@ -95,7 +95,7 @@ class _deviceInformationState extends State<deviceInformation> {
                             child: Text('Off'),
                             onPressed: () {
                               try {
-                                _services[0]
+                                _services[2]
                                     .characteristics[0]
                                     .write(utf8.encode('OFF'));
                               } catch (error) {
