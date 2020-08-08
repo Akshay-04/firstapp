@@ -1,9 +1,8 @@
-import 'dart:convert';
-
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:wardlabs/providerclasses/addedboxes.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+<<<<<<< HEAD
 import 'package:wardlabs/providerclasses/basicbox.dart';
 import '../screens/subscreensofmainscreen/addnewboxes.dart';
 
@@ -16,6 +15,10 @@ class deviceInformation extends StatefulWidget {
 
 class _deviceInformationState extends State<deviceInformation> {
   bool isLoading = false;
+=======
+class deviceInformation extends StatelessWidget {
+  static String routeName = '/deviceInformation';
+>>>>>>> parent of f807b8e... df
   Widget build(BuildContext context) {
     bool _paired(BluetoothDevice device) {
       List<BluetoothDevice> temp =
@@ -29,14 +32,20 @@ class _deviceInformationState extends State<deviceInformation> {
     }
 
     final args =
+<<<<<<< HEAD
         ModalRoute.of(context).settings.arguments as Map<String, Object>;
     BluetoothDevice thisdevice = args['selecteddevice'];
     List<BluetoothService> _services = args['services'];
+=======
+        ModalRoute.of(context).settings.arguments as BluetoothDevice;
+    String name = args.name;
+>>>>>>> parent of f807b8e... df
     return Scaffold(
         appBar: AppBar(
-          title: Text(thisdevice.name),
+          title: Text(name),
         ),
         body: Container(
+<<<<<<< HEAD
             child: isLoading
                 ? Center(child: CircularProgressIndicator())
                 : Card(
@@ -110,6 +119,29 @@ class _deviceInformationState extends State<deviceInformation> {
                     ]),
                     elevation: 20,
                   ),
+=======
+            child: Card(
+              child: Column(children: <Widget>[
+                if (!_paired(args))
+                  RaisedButton(
+                    onPressed: () {
+                      Provider.of<pairedboxes>(context,listen:false).pairnewbox(args);
+                      Navigator.pop(context);
+                    },
+                    child: Text('Pair'),
+                  )
+                else
+                  RaisedButton(
+                    onPressed: () {
+                      Provider.of<pairedboxes>(context,listen: false).unpairbox(args);
+                      Navigator.pop(context);
+                    },
+                    child: Text('Unpair'),
+                  )
+              ]),
+              elevation: 20,
+            ),
+>>>>>>> parent of f807b8e... df
             width: double.infinity));
   }
 }

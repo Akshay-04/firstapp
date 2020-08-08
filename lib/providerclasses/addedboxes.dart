@@ -52,6 +52,7 @@ class pairedboxes with ChangeNotifier {
       notifyListeners();
     }
   }
+<<<<<<< HEAD
 
   bool checkduplicateboxes(BluetoothDevice b) {
     for (int i = 0; i < listofpairedboxes.length; i++) {
@@ -61,4 +62,6 @@ class pairedboxes with ChangeNotifier {
     }
     return false;
   }
+=======
+>>>>>>> parent of f807b8e... df
 }
