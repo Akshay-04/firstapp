@@ -22,7 +22,7 @@ class contentInBoxState extends State<contentInBox> {
     });
   }
 
-  void get func async {
+  Future<void> get func async {
     await flutterBlue.stopScan();
     try {
       await widget.device.connect();
@@ -37,8 +37,8 @@ class contentInBoxState extends State<contentInBox> {
 
   Widget build(BuildContext context) {
     return InkWell(
-        onTap: () {
-          func;
+        onTap: () async{
+          await func;
           TransitionToDeviceDetail(context);
         },
         child: Container(
