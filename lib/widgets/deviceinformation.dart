@@ -9,13 +9,13 @@ import '../screens/subscreensofmainscreen/addnewboxes.dart';
 
 class deviceInformation extends StatefulWidget {
   static String routeName = '/deviceInformation';
- 
+
   @override
   _deviceInformationState createState() => _deviceInformationState();
 }
 
 class _deviceInformationState extends State<deviceInformation> {
-   bool isLoading = false;
+  bool isLoading = false;
   Widget build(BuildContext context) {
     bool _paired(BluetoothDevice device) {
       List<BluetoothDevice> temp =
@@ -37,63 +37,79 @@ class _deviceInformationState extends State<deviceInformation> {
           title: Text(thisdevice.name),
         ),
         body: Container(
-                  child:
-                  isLoading?
-                    Center(child: CircularProgressIndicator())
-                :
-                   Card(
-              child: Column(children: <Widget>[
-                 if(!_paired(thisdevice))
-                  RaisedButton(
-                    onPressed: () {
-                      setState(() {
-                        isLoading = true;
-                      });
-                      Provider.of<pairedboxes>(context, listen: false)
-                          .pairnewbox(thisdevice)
-                          .then((_) {
-                        setState(() {
-                          isLoading = false;
-                        });
-                        Navigator.pop(context);
-                      });
-                    },
-                    child: Text('Pair'),
-                  )
-                else
-                  RaisedButton(
-                      child: Text('Unpair'),
-                      onPressed: () {
-                        setState(() {
-                          isLoading = true;
-                        });
+            child: isLoading
+                ? Center(child: CircularProgressIndicator())
+                : Card(
+                    child: Column(children: <Widget>[
+                      if (!_paired(thisdevice))
+                        RaisedButton(
+                          onPressed: () {
+                            setState(() {
+                              isLoading = true;
+                            });
+                            Provider.of<pairedboxes>(context, listen: false)
+                                .pairnewbox(thisdevice)
+                                .then((_) {
+                              setState(() {
+                                isLoading = false;
+                              });
+                              Navigator.pop(context);
+                            });
+                          },
+                          child: Text('Pair'),
+                        )
+                      else
+                        RaisedButton(
+                            child: Text('Unpair'),
+                            onPressed: () {
+                              setState(() {
+                                isLoading = true;
+                              });
 
-                        Provider.of<pairedboxes>(context, listen: false)
-                            .unpairbox(thisdevice);
+                              Provider.of<pairedboxes>(context, listen: false)
+                                  .unpairbox(thisdevice);
 
-                        Navigator.pop(context);
-                      }),
-                if (_paired(thisdevice))
-                  RaisedButton(
-                    child: Text('On'),
-                    onPressed: () {
-                      print(_services);
-                      _services[2].characteristics[0].write(utf8.encode('ON'));
-                    },
+                              Navigator.pop(context);
+                            }),
+                      if (_paired(thisdevice))
+                        RaisedButton(
+                          child: Text('On'),
+                          onPressed: () {
+                            print(_services);
+                            try {
+                              _services[0]
+                                  .characteristics[0]
+                                  .write(utf8.encode('ON'));
+                            } catch (error) {
+                              showDialog(
+                                  context: context,
+                                  child: AlertDialog(
+                                    title: Text('error'),
+                                    content: Text(error.toString()),
+                                  ));
+                            }
+                          },
+                        ),
+                      if (_paired(thisdevice))
+                        RaisedButton(
+                            child: Text('Off'),
+                            onPressed: () {
+                              try {
+                                _services[0]
+                                    .characteristics[0]
+                                    .write(utf8.encode('OFF'));
+                              } catch (error) {
+                                showDialog(
+                                    context: context,
+                                    child: AlertDialog(
+                                      title: Text('error'),
+                                      content: Text(error.toString()),
+                                    ));
+                              }
+                            })
+                    ]),
+                    elevation: 20,
                   ),
-                if (_paired(thisdevice))
-                  RaisedButton(
-                    child: Text('Off'),
-                    onPressed: () {
-                      _services[2].characteristics[0].write(utf8.encode('OFF'));
-                    },
-                  )
-              ]),
-              elevation: 20,
-                   ),
-            width: double.infinity
-            
-            )
-            );
+            width: double.infinity));
   }
 }
