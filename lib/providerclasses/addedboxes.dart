@@ -15,15 +15,21 @@ class pairedboxes with ChangeNotifier {
   List<MyBox> listofpairedboxes = [];
   List<MyBox> paireddeviceid = [];
   Future<List<MyBox>> getListOfpairedBoxes() async {
-    listofpairedboxes = [];
-    var res=await http.get(firebaseurl);
-      var temp = json.decode(res.body) as Map<String, dynamic>;
-      temp.forEach((key, value) {
-        listofpairedboxes.add(MyBox(key, value));
-      });
-  
-    print('in init');
-    print(listofpairedboxes.length);
+    // listofpairedboxes = [];
+    var res;
+    try {
+      res =
+          await http.get('https://wardlabs.firebaseio.com/paireddevices.json');
+    } catch (error) {
+      print(error.toString());
+    }
+    var temp = json.decode(res.body) as Map<String, dynamic>;
+    print(temp);
+    temp.forEach((key, value) {
+      print(value);
+      listofpairedboxes.add(MyBox(key, value['deviceid']));
+    });
+
     return [...listofpairedboxes];
   }
 
@@ -54,15 +60,24 @@ class pairedboxes with ChangeNotifier {
 
   void unpairbox(BluetoothDevice deletebox) {
     int index = -1;
+    String temp = '';
     for (int i = 0; i < listofpairedboxes.length; i++) {
-      if (deletebox.id.toString() == listofpairedboxes[i].id) {
+      print(deletebox.id.toString());
+      print(listofpairedboxes[i].id);
+      if (deletebox.id.toString() == listofpairedboxes[i].deviceid) {
         index = i;
+        temp = listofpairedboxes[i].id;
       }
     }
     if (index >= 0) {
+      try {
+        http.delete('https://wardlabs.firebaseio.com/paireddevices/$temp.json');
+      } catch (error) {
+        print(error.toString());
+      }
       listofpairedboxes.removeAt(index);
       notifyListeners();
-    }
+    } 
   }
 
   bool checkduplicateboxes(BluetoothDevice b) {

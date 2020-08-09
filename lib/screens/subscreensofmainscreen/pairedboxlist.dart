@@ -7,6 +7,7 @@ import 'package:flutter_blue/flutter_blue.dart';
 
 class boxList extends StatefulWidget {
   int index;
+    List<MyBox> listofalreadypairedboxid = [];
   boxList(this.index);
 
   @override
@@ -16,7 +17,7 @@ class boxList extends StatefulWidget {
 class _boxListState extends State<boxList> {
   List<ScanResult> listofalreadypairedboxes = [];
 
-  List<MyBox> listofalreadypairedboxid = [];
+
 
   Future<List<BluetoothDevice>> getlist() async {
     flutterBlue.scan(timeout: Duration(seconds: 2));
@@ -34,13 +35,12 @@ class _boxListState extends State<boxList> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     Provider.of<pairedboxes>(context, listen: false)
         .getListOfpairedBoxes()
         .then((value) {
           setState(() {
-             listofalreadypairedboxid = value;
+             widget.listofalreadypairedboxid = value;
           });
     });
   }
@@ -57,9 +57,9 @@ class _boxListState extends State<boxList> {
           } else if (snapshot.connectionState == ConnectionState.active) {
             listofalreadypairedboxes = snapshot.data;
             listofalreadypairedboxes.retainWhere((element) {
-              for (int i = 0; i < listofalreadypairedboxid.length; i++) {
+              for (int i = 0; i < widget.listofalreadypairedboxid.length; i++) {
                 if (element.device.id.toString() ==
-                    listofalreadypairedboxid[i].deviceid) {
+                    widget.listofalreadypairedboxid[i].deviceid) {
                   return true;
                 }
               }
