@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:wardlabs/widgets/deviceinformation.dart';
+import 'package:wardlabs/widgets/deviceinformationfornewdevices.dart';
+import 'package:wardlabs/widgets/deviceinformationforpaireddevices.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import '../screens/subscreensofmainscreen/addnewboxes.dart';
 
 class contentInBox extends StatefulWidget {
   BluetoothDevice device;
+  int index;
   List<BluetoothService> _services = [];
-
-  contentInBox(this.device);
+  contentInBox(this.device, this.index);
   @override
   createState() {
     return contentInBoxState();
@@ -16,10 +17,19 @@ class contentInBox extends StatefulWidget {
 
 class contentInBoxState extends State<contentInBox> {
   void TransitionToDeviceDetail(ctx) {
-    Navigator.of(ctx).pushNamed(deviceInformation.routeName, arguments: {
-      'selecteddevice': widget.device,
-      'services': widget._services
-    });
+    if (widget.index == 0) {
+      Navigator.of(ctx).pushNamed(deviceInformationforpaireddevices.routeName,
+          arguments: {
+            'selecteddevice': widget.device,
+            'services': widget._services
+          });
+    }
+    if (widget.index == 1) {
+      Navigator.of(ctx)
+          .pushNamed(deviceInformationfornewdevices.routeName, arguments: {
+        'selecteddevice': widget.device,
+      });
+    }
   }
 
   Future<void> get func async {
@@ -37,7 +47,7 @@ class contentInBoxState extends State<contentInBox> {
 
   Widget build(BuildContext context) {
     return InkWell(
-        onTap: () async{
+        onTap: () async {
           await func;
           TransitionToDeviceDetail(context);
         },

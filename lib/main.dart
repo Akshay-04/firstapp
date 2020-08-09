@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:wardlabs/providerclasses/addedboxes.dart';
 import 'package:wardlabs/providerclasses/basicbox.dart';
-import 'package:wardlabs/widgets/deviceinformation.dart';
+import 'package:wardlabs/widgets/deviceinformationfornewdevices.dart';
+import 'package:wardlabs/widgets/deviceinformationforpaireddevices.dart';
 import 'package:wardlabs/screens/mainscreen.dart';
 import 'package:wardlabs/screens/subscreensofmainscreen/settingscreen.dart';
 import 'package:provider/provider.dart';
@@ -29,12 +30,15 @@ class MyApp extends StatelessWidget {
             mainscreen.routeName: (co) {
               return mainscreen();
             },
-            deviceInformation.routeName: (cont) {
-              return deviceInformation();
+            deviceInformationfornewdevices.routeName: (cont) {
+              return deviceInformationfornewdevices();
             },
             settingscreen.routeName: (con) {
               return settingscreen();
-            }
+            },
+            deviceInformationforpaireddevices.routeName: (cont) {
+              return deviceInformationforpaireddevices();
+            },
           },
         ));
   }

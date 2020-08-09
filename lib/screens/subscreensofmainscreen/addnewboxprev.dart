@@ -29,7 +29,7 @@ class addNewBox extends StatelessWidget {
             itemCount: devices.length,
             itemBuilder: (context, index) {
               BluetoothDevice q = devices[index];
-              return contentInBox(q);
+              return contentInBox(q,1);
             },
             padding: EdgeInsets.all(25),
             gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(

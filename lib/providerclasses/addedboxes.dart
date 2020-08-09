@@ -7,35 +7,44 @@ const String firebaseurl = 'https://wardlabs.firebaseio.com/paireddevices.json';
 
 class MyBox {
   String id;
-  DeviceIdentifier deviceid;
+  String deviceid;
   MyBox(this.id, this.deviceid);
-   
 }
 
 class pairedboxes with ChangeNotifier {
-  List<BluetoothDevice> listofpairedboxes = [];
+  List<MyBox> listofpairedboxes = [];
   List<MyBox> paireddeviceid = [];
-  get getListOfpairedBoxes {
+  List<MyBox> getListOfpairedBoxes() {
+    http.get(firebaseurl).then((value) {
+      var temp = json.decode(value.body) as Map<String, dynamic>;
+      temp.forEach((key, value) {
+        print(key);
+        print(json.decode(value));
+      });
+    });
+
     return [...listofpairedboxes];
   }
-  getdeviceidofbox(String id)
-  {
-    for(int i=0;i<paireddeviceid.length;i++)
-    {
-    if(id==paireddeviceid[i].id)
-    {
-      return paireddeviceid[i].deviceid;
-    }
+
+  getdeviceidofbox(String id) {
+    for (int i = 0; i < paireddeviceid.length; i++) {
+      if (id == paireddeviceid[i].id) {
+        return paireddeviceid[i].deviceid;
+      }
     }
   }
 
-  Future<void> pairnewbox(BluetoothDevice device) {
+  Future<void> pairnewbox(BluetoothDevice device) async {
     print('here1');
-    return http.post(firebaseurl, body: json.encode({'device': device.toString()}))
+    http
+        .post(firebaseurl,
+            body: json.encode(
+                {'deviceid': device.id.toString(), 'devicename': device.name}))
         .then((value) {
-      paireddeviceid.add(MyBox(json.decode(value.body)['Name'], device.id));
-      print('here2');
-      listofpairedboxes.add(device);
+      paireddeviceid.add(MyBox(json.decode(value.body)['Name'], device.id.toString()));
+      listofpairedboxes.add(MyBox(json.decode(value.body)['Name'], device.id.toString()));
+      print('paired:');
+      print(listofpairedboxes[listofpairedboxes.length-1].deviceid);
       notifyListeners();
     });
   }
@@ -43,7 +52,7 @@ class pairedboxes with ChangeNotifier {
   void unpairbox(BluetoothDevice deletebox) {
     int index = -1;
     for (int i = 0; i < listofpairedboxes.length; i++) {
-      if (deletebox.id == listofpairedboxes[i].id) {
+      if (deletebox.id.toString() == listofpairedboxes[i].id) {
         index = i;
       }
     }
@@ -55,7 +64,7 @@ class pairedboxes with ChangeNotifier {
 
   bool checkduplicateboxes(BluetoothDevice b) {
     for (int i = 0; i < listofpairedboxes.length; i++) {
-      if (b.id == listofpairedboxes[i].id) {
+      if (b.id.toString() == listofpairedboxes[i].deviceid.toString()) {
         return true;
       }
     }

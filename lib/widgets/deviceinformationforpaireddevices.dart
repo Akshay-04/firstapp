@@ -7,26 +7,26 @@ import 'package:flutter_blue/flutter_blue.dart';
 import 'package:wardlabs/providerclasses/basicbox.dart';
 import '../screens/subscreensofmainscreen/addnewboxes.dart';
 
-class deviceInformation extends StatefulWidget {
-  static String routeName = '/deviceInformation';
+class deviceInformationforpaireddevices extends StatefulWidget {
+  static String routeName = '/deviceInformationforpaireddevices';
 
   @override
-  _deviceInformationState createState() => _deviceInformationState();
+ _deviceInformationforpaireddevicesState createState() => _deviceInformationforpaireddevicesState();
 }
 
-class _deviceInformationState extends State<deviceInformation> {
+class _deviceInformationforpaireddevicesState extends State<deviceInformationforpaireddevices> {
   bool isLoading = false;
   Widget build(BuildContext context) {
-    bool _paired(BluetoothDevice device) {
-      List<BluetoothDevice> temp =
-          Provider.of<pairedboxes>(context).listofpairedboxes;
-      for (int i = 0; i < temp.length; i++) {
-        if (device.id == temp[i].id) {
-          return true;
-        }
-      }
-      return false;
-    }
+    // bool _paired(BluetoothDevice device) {
+    //   List<BluetoothDevice> temp =
+    //       Provider.of<pairedboxes>(context).listofpairedboxes;
+    //   for (int i = 0; i < temp.length; i++) {
+    //     if (device.id == temp[i].id) {
+    //       return true;
+    //     }
+    //   }
+    //   return false;
+    // }
 
     final args =
         ModalRoute.of(context).settings.arguments as Map<String, Object>;
@@ -41,24 +41,7 @@ class _deviceInformationState extends State<deviceInformation> {
                 ? Center(child: CircularProgressIndicator())
                 : Card(
                     child: Column(children: <Widget>[
-                      if (!_paired(thisdevice))
-                        RaisedButton(
-                          onPressed: () {
-                            setState(() {
-                              isLoading = true;
-                            });
-                            Provider.of<pairedboxes>(context, listen: false)
-                                .pairnewbox(thisdevice)
-                                .then((_) {
-                              setState(() {
-                                isLoading = false;
-                              });
-                              Navigator.pop(context);
-                            });
-                          },
-                          child: Text('Pair'),
-                        )
-                      else
+                      
                         RaisedButton(
                             child: Text('Unpair'),
                             onPressed: () {
@@ -71,7 +54,7 @@ class _deviceInformationState extends State<deviceInformation> {
 
                               Navigator.pop(context);
                             }),
-                      if (_paired(thisdevice))
+                      
                         RaisedButton(
                           child: Text('On'),
                           onPressed: () {
@@ -90,7 +73,7 @@ class _deviceInformationState extends State<deviceInformation> {
                             }
                           },
                         ),
-                      if (_paired(thisdevice))
+                      
                         RaisedButton(
                             child: Text('Off'),
                             onPressed: () {

@@ -8,6 +8,7 @@ import 'package:wardlabs/screens/subscreensofmainscreen/settingscreen.dart';
 class mainscreen extends StatefulWidget {
   @override
   static String routeName='/home';
+  int screenindex=0;
   State<StatefulWidget> createState() {
     return mainscreenState();
   }
@@ -15,22 +16,22 @@ class mainscreen extends StatefulWidget {
 
 class mainscreenState extends State<mainscreen> {
 
-  int _screenindex=0;
+  
   void _changescreen(int index)
   {
     setState(() {
-      _screenindex=index;
+      widget.screenindex=index;
     });
   }
 
   final List<Map<String,Object>> _screens= [
     {
       'Title': 'Added Boxes',
-      'screen': boxList(),
+      'screen': boxList(0),
     },
     {
       'Title': 'Add New Box',
-      'screen':addNewBox()
+      'screen':addNewBox(1)
     },
         {
       'Title': 'Settings',
@@ -41,12 +42,12 @@ class mainscreenState extends State<mainscreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_screens[_screenindex]['Title']),
+        title: Text(_screens[widget.screenindex]['Title']),
       ),
       drawer: drawerScreen(),
-      body: _screens[_screenindex]['screen'],
+      body: _screens[widget.screenindex]['screen'],
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _screenindex,
+        currentIndex: widget.screenindex,
         selectedItemColor: Colors.black,
         unselectedItemColor: Colors.black54,
         type: BottomNavigationBarType.shifting,
@@ -58,7 +59,7 @@ class mainscreenState extends State<mainscreen> {
             icon: Icon(Icons.bluetooth_connected),
             title: Text(_screens[0]['Title'])),
         BottomNavigationBarItem(
-            icon: Icon(Icons.bluetooth_audio), title: Text(_screens[1]['Title'])),
+            icon: Icon(Icons.bluetooth_audio), title: Text(_screens[1]['Title']),),
         BottomNavigationBarItem(
             icon: Icon(Icons.settings), title: Text(_screens[2]['Title']))
       ]),
