@@ -8,55 +8,79 @@ import 'package:flutter_blue/flutter_blue.dart';
 class boxList extends StatefulWidget {
   int index;
   boxList(this.index);
+
   @override
   _boxListState createState() => _boxListState();
 }
 
 class _boxListState extends State<boxList> {
-  List<BluetoothDevice> listofalreadypairedboxes=[];
-  List<MyBox> listofalreadypairedboxid;
-  Future<void> getlist() async {
-    await flutterBlue.startScan( timeout: Duration(seconds: 2));
+  List<ScanResult> listofalreadypairedboxes = [];
 
-     flutterBlue.scanResults.listen((results) {
-      // do something with scan results
+  List<MyBox> listofalreadypairedboxid = [];
+
+  Future<List<BluetoothDevice>> getlist() async {
+    flutterBlue.scan(timeout: Duration(seconds: 2));
+    List<BluetoothDevice> temp = [];
+    await for (List<ScanResult> results in flutterBlue.scanResults) {
       for (ScanResult r in results) {
-        setState(() {
-          listofalreadypairedboxes.add(r.device);
-        });
-        
+        temp.add(r.device);
+        print(r.device.name);
       }
-    }).onDone(()async {await flutterBlue.stopScan(); });
-
-     
+      await flutterBlue.stopScan();
+      return temp;
+    }
+    return temp;
   }
 
   @override
   void initState() {
- 
-   getlist().then((value) {
-      super.initState();
+    // TODO: implement initState
+    super.initState();
+    Provider.of<pairedboxes>(context, listen: false)
+        .getListOfpairedBoxes()
+        .then((value) {
+          setState(() {
+             listofalreadypairedboxid = value;
+          });
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        child: GridView(
-      padding: EdgeInsets.all(25),
-      children: <Widget>[
-        if (listofalreadypairedboxes.isNotEmpty)
-          ...listofalreadypairedboxes.map((element) {
-            return contentInBox(element, widget.index);
-          }).toList()
-        else
-          Text('Empty'),
-      ],
-      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: 200,
-          childAspectRatio: 4 / 3,
-          crossAxisSpacing: 30,
-          mainAxisSpacing: 30),
-    ));
+    return StreamBuilder(
+        stream: flutterBlue.scanResults,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Text('Empty');
+          } else if (snapshot.error != null) {
+            return Text(snapshot.error.toString());
+          } else if (snapshot.connectionState == ConnectionState.active) {
+            listofalreadypairedboxes = snapshot.data;
+            listofalreadypairedboxes.retainWhere((element) {
+              for (int i = 0; i < listofalreadypairedboxid.length; i++) {
+                if (element.device.id.toString() ==
+                    listofalreadypairedboxid[i].deviceid) {
+                  return true;
+                }
+              }
+              return false;
+            });
+            return Container(
+                child: GridView(
+              padding: EdgeInsets.all(25),
+              children: <Widget>[
+                if (listofalreadypairedboxes.isNotEmpty)
+                  ...listofalreadypairedboxes.map((element) {
+                    return contentInBox(element.device, widget.index);
+                  }).toList()
+              ],
+              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 200,
+                  childAspectRatio: 4 / 3,
+                  crossAxisSpacing: 30,
+                  mainAxisSpacing: 30),
+            ));
+          }
+        });
   }
 }

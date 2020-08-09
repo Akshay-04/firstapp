@@ -14,15 +14,16 @@ class MyBox {
 class pairedboxes with ChangeNotifier {
   List<MyBox> listofpairedboxes = [];
   List<MyBox> paireddeviceid = [];
-  List<MyBox> getListOfpairedBoxes() {
-    http.get(firebaseurl).then((value) {
-      var temp = json.decode(value.body) as Map<String, dynamic>;
+  Future<List<MyBox>> getListOfpairedBoxes() async {
+    listofpairedboxes = [];
+    var res=await http.get(firebaseurl);
+      var temp = json.decode(res.body) as Map<String, dynamic>;
       temp.forEach((key, value) {
-        print(key);
-        print(json.decode(value));
+        listofpairedboxes.add(MyBox(key, value));
       });
-    });
-
+  
+    print('in init');
+    print(listofpairedboxes.length);
     return [...listofpairedboxes];
   }
 
@@ -36,15 +37,17 @@ class pairedboxes with ChangeNotifier {
 
   Future<void> pairnewbox(BluetoothDevice device) async {
     print('here1');
-    http
+    await http
         .post(firebaseurl,
             body: json.encode(
                 {'deviceid': device.id.toString(), 'devicename': device.name}))
         .then((value) {
-      paireddeviceid.add(MyBox(json.decode(value.body)['Name'], device.id.toString()));
-      listofpairedboxes.add(MyBox(json.decode(value.body)['Name'], device.id.toString()));
+      paireddeviceid
+          .add(MyBox(json.decode(value.body)['Name'], device.id.toString()));
+      listofpairedboxes
+          .add(MyBox(json.decode(value.body)['Name'], device.id.toString()));
       print('paired:');
-      print(listofpairedboxes[listofpairedboxes.length-1].deviceid);
+      print(listofpairedboxes[listofpairedboxes.length - 1].deviceid);
       notifyListeners();
     });
   }
