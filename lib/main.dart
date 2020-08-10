@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wardlabs/providerclasses/addedboxes.dart';
 import 'package:wardlabs/providerclasses/basicbox.dart';
+import 'package:wardlabs/screens/signup.dart';
 import 'package:wardlabs/widgets/deviceinformationfornewdevices.dart';
 import 'package:wardlabs/widgets/deviceinformationforpaireddevices.dart';
 import 'package:wardlabs/screens/mainscreen.dart';
@@ -25,10 +26,13 @@ class MyApp extends StatelessWidget {
         ],
         child: MaterialApp(
           theme: ThemeData(primarySwatch: Colors.red),
-          home: mainscreen(),
+          home: Signup(),
           routes: {
             mainscreen.routeName: (co) {
               return mainscreen();
+            },
+            Signup.routeName: (co) {
+              return Signup();
             },
             deviceInformationfornewdevices.routeName: (cont) {
               return deviceInformationfornewdevices();
