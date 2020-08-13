@@ -36,12 +36,14 @@ class contentInBoxState extends State<contentInBox> {
   }
 
   Widget build(BuildContext context) {
-    return InkWell(
+    return Container(child:InkWell(
         onTap: () async{
           await func;
           TransitionToDeviceDetail(context);
         },
+
         child: Container(
+          width: double.infinity,
             decoration: BoxDecoration(
               gradient: LinearGradient(
                   colors: [Colors.blue.withOpacity(0.7), Colors.blue],
@@ -52,6 +54,10 @@ class contentInBoxState extends State<contentInBox> {
             child: Column(children: <Widget>[
               Icon(Icons.add_box),
               Text(widget.device.name),
-            ])));
+            ]
+            )
+            )
+            )
+            );
   }
 }
