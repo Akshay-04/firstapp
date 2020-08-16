@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wardlabs/ScreensforAuth/Screens/Welcome/welcome_screen.dart';
 import 'package:wardlabs/providerclasses/addedboxes.dart';
 import 'package:wardlabs/providerclasses/basicbox.dart';
 import 'package:wardlabs/screens/signup.dart';
@@ -31,7 +32,7 @@ class MyApp extends StatelessWidget {
         primaryColor: kPrimaryColor,
         scaffoldBackgroundColor: Colors.white,
       ),
-          home: mainscreen(),
+          home: WelcomeScreen(),
           routes: {
             mainscreen.routeName: (co) {
               return mainscreen();

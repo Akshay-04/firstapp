@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:wardlabs/screens/mainscreen.dart';
 import './background.dart';
 import '../../Signup/signup_screen.dart';
 import '../../../components/already_have_an_account_acheck.dart';
@@ -14,6 +16,7 @@ class Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String email, password;
     Size size = MediaQuery.of(context).size;
     return Background(
       child: SingleChildScrollView(
@@ -32,14 +35,20 @@ class Body extends StatelessWidget {
             SizedBox(height: size.height * 0.03),
             RoundedInputField(
               hintText: "Your Email",
-              onChanged: (value) {},
+              onChanged: (value) {
+                email = value;
+              },
             ),
             RoundedPasswordField(
-              onChanged: (value) {},
+              onChanged: (value) {
+                password = value;
+              },
             ),
             RoundedButton(
               text: "LOGIN",
-              press: () {},
+              press: () {
+                login(context,email, password);
+              },
             ),
             SizedBox(height: size.height * 0.03),
             AlreadyHaveAnAccountCheck(
@@ -59,4 +68,15 @@ class Body extends StatelessWidget {
       ),
     );
   }
+}
+
+Future<void> login(BuildContext context,String email,String password) async {
+  try {
+    AuthResult result = await FirebaseAuth.instance
+        .signInWithEmailAndPassword(email: email, password: password);
+    Navigator.popAndPushNamed(context,mainscreen.routeName,arguments: result);
+  } catch (e) {
+    print(e.message);
+  }
+  return;
 }

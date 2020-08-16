@@ -9,7 +9,7 @@ class Signup extends StatefulWidget {
 
 class _SignupState extends State<Signup> {
   Map<String, String> au = {'name': '', 'email': '', 'password': ''};
-  TextEditingController pass=TextEditingController();
+  String pass;
   final _key = GlobalKey<FormState>();
   final FocusNode emailfocus = FocusNode(),
       namefocus = FocusNode(),
@@ -25,9 +25,9 @@ class _SignupState extends State<Signup> {
   }
 
   void saveform() {
-     //print(pass);
-   if (!_key.currentState.validate()) {
-        return;
+    //print(pass);
+    if (!_key.currentState.validate()) {
+      return;
     }
     _key.currentState.save();
     print(au['email']);
@@ -93,13 +93,14 @@ class _SignupState extends State<Signup> {
                   decoration: InputDecoration(labelText: 'Confirm Password'),
                   focusNode: confirmfocus,
                   textInputAction: TextInputAction.done,
-                  controller: pass,
-
+                  onFieldSubmitted: (value) => pass = value,
                   validator: (value) {
                     if (value.isEmpty) {
                       return 'field required';
                     }
-                    if (pass.text == au['password']) {
+                    print(pass);
+                    print(au['password']);
+                    if (pass != au['password']) {
                       return 'password must match';
                     }
                   }),
