@@ -8,16 +8,15 @@ import 'package:flutter_blue/flutter_blue.dart';
 final FlutterBlue flutterBlue = FlutterBlue.instance;
 
 class addNewBox extends StatefulWidget {
+  static String routename = '/addnewdevice';
   final List<BluetoothDevice> devicesList = new List<BluetoothDevice>();
-  int index;
-  addNewBox(this.index);
+
   @override
   _addNewBoxState createState() => _addNewBoxState();
 }
 
 class _addNewBoxState extends State<addNewBox> {
   _addDeviceTolist(final BluetoothDevice device) {
-    
     if (!widget.devicesList.contains(device)) {
       setState(() {
         widget.devicesList.add(device);
@@ -46,13 +45,11 @@ class _addNewBoxState extends State<addNewBox> {
   }
 
   GridView _buildListViewOfDevices() {
- 
-
     return GridView.builder(
       itemCount: widget.devicesList.length,
       itemBuilder: (context, index) {
         BluetoothDevice q = widget.devicesList[index];
-        return contentInBox(q,widget.index);
+        return contentInBox(q,1);
       },
       padding: EdgeInsets.all(25),
       gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
@@ -64,8 +61,11 @@ class _addNewBoxState extends State<addNewBox> {
   }
 
   Widget build(BuildContext context) {
-       widget.devicesList.removeWhere((element) =>
+    widget.devicesList.removeWhere((element) =>
         Provider.of<pairedboxes>(context).checkduplicateboxes(element));
-    return _buildListViewOfDevices();
+    return 
+    Scaffold(appBar: AppBar(title: Text('Add New Devices'),),body:_buildListViewOfDevices() ,); 
+    
+    
   }
 }
