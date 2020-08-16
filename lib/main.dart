@@ -12,6 +12,8 @@ import 'package:provider/provider.dart';
 void main() {
   runApp(MyApp());
 }
+const kPrimaryColor = Color(0xFF6F35A5);
+const kPrimaryLightColor = Color(0xFFF1E6FF);
 
 //done
 class MyApp extends StatelessWidget {
@@ -25,7 +27,10 @@ class MyApp extends StatelessWidget {
           )
         ],
         child: MaterialApp(
-          theme: ThemeData(primarySwatch: Colors.red),
+           theme: ThemeData(
+        primaryColor: kPrimaryColor,
+        scaffoldBackgroundColor: Colors.white,
+      ),
           home: mainscreen(),
           routes: {
             mainscreen.routeName: (co) {

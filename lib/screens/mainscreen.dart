@@ -24,7 +24,7 @@ class mainscreenState extends State<mainscreen> {
   final List<Map<String, Object>> _screens = [
     {
       'Title': 'Added Boxes',
-      'screen': boxList(0),
+      'screen': boxlist(0),
     },
     {
       'Title': 'Settings',

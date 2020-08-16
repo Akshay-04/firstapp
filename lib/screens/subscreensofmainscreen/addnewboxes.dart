@@ -100,6 +100,9 @@ class _FindDevicesScreenState extends State<FindDevicesScreen> {
         .then((value) {
       setState(() {
         widget.listofalreadypairedboxid = value;
+        value.forEach((element) {
+          print(element);
+        });
       });
     });
   }
@@ -113,7 +116,6 @@ class _FindDevicesScreenState extends State<FindDevicesScreen> {
 
   @override
   Widget build(BuildContext context) {
-   
     return StreamBuilder<List<ScanResult>>(
         stream: FlutterBlue.instance.scanResults,
         initialData: [],
@@ -137,25 +139,25 @@ class _FindDevicesScreenState extends State<FindDevicesScreen> {
               );
             } else if (snapshot.connectionState == ConnectionState.active) {
               var Scanresult = snapshot.data ?? [];
-              Scanresult.retainWhere((element) {
-                for (int i = 0;
-                    i < widget.listofalreadypairedboxid.length;
-                    i++) {
-                  if (element.device.id.toString() ==
-                      widget.listofalreadypairedboxid[i].deviceid) {
-                    return false;
-                  }
-                }
-                return true;
-              });
+               Scanresult.retainWhere((element) {
+                 for (int i = 0;
+                     i < widget.listofalreadypairedboxid.length;
+                     i++) {
+                   if (element.device.id.toString() ==
+                       widget.listofalreadypairedboxid[i].deviceid) {
+                     return false;
+                   }
+                 }
+                 return true;
+               });
               Scanresult.retainWhere((element) {
                 if (element.device.name.isNotEmpty) {
                   return true;
                 } else {
-                  return false;
+                 return false;
                 }
               });
-               Provider.of<pairedboxes>(context);
+              Provider.of<pairedboxes>(context);
               return GridView.builder(
                 itemCount: Scanresult.length ?? 0,
                 itemBuilder: (context, index) {

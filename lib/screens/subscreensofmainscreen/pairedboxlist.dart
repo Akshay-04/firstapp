@@ -1,86 +1,96 @@
-import 'package:wardlabs/providerclasses/basicbox.dart';
 import 'package:wardlabs/widgets/contentinbox.dart';
 import 'package:provider/provider.dart';
+import '../../providerclasses/basicbox.dart';
 import 'package:flutter/material.dart';
 import '../../providerclasses/addedboxes.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
-class boxList extends StatefulWidget {
-  int index;
-    List<MyBox> listofalreadypairedboxid = [];
-  boxList(this.index);
+List<MyBox> paireddevices = [];
 
+class boxlist extends StatefulWidget {
+  static String routename = '/pairedboxes';
+  List<BluetoothDevice> devicesList = new List<BluetoothDevice>();
+  int index;
+  boxlist(this.index);
   @override
-  _boxListState createState() => _boxListState();
+  boxliststate createState() => boxliststate();
 }
 
-class _boxListState extends State<boxList> {
-  List<ScanResult> listofalreadypairedboxes = [];
-
-
-
-  Future<List<BluetoothDevice>> getlist() async {
-    flutterBlue.scan(timeout: Duration(seconds: 2));
-    List<BluetoothDevice> temp = [];
-    await for (List<ScanResult> results in flutterBlue.scanResults) {
-      for (ScanResult r in results) {
-        temp.add(r.device);
-        print(r.device.name);
-      }
-      await flutterBlue.stopScan();
-      return temp;
+class boxliststate extends State<boxlist> {
+  bool waiting = false;
+  _addDeviceTolist(final BluetoothDevice device) {
+    if (!widget.devicesList.contains(device)) {
+      setState(() {
+        widget.devicesList.add(device);
+      });
     }
-    return temp;
   }
 
   @override
   void initState() {
     super.initState();
+
+    flutterBlue.connectedDevices
+        .asStream()
+        .listen((List<BluetoothDevice> devices) {
+      for (BluetoothDevice device in devices) {
+        _addDeviceTolist(device);
+      }
+    });
+    flutterBlue.scanResults.listen((List<ScanResult> results) {
+      for (ScanResult result in results) {
+        if (result.device.name.isNotEmpty) {
+          _addDeviceTolist(result.device);
+        }
+      }
+    });
+    flutterBlue.startScan();
     Provider.of<pairedboxes>(context, listen: false)
         .getListOfpairedBoxes()
         .then((value) {
-          setState(() {
-             widget.listofalreadypairedboxid = value;
-          });
+      setState(() {
+        paireddevices = value;
+      });
     });
   }
 
-  @override
+  GridView _buildListViewOfDevices() {
+    return GridView.builder(
+      itemCount: widget.devicesList.length,
+      itemBuilder: (context, index) {
+        BluetoothDevice q = widget.devicesList[index];
+        return InkWell(
+            onTap: () {
+              setState(() {
+                waiting = true;
+              });
+            },
+            child: contentInBox(q, widget.index));
+      },
+      padding: EdgeInsets.all(25),
+      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: 200,
+          childAspectRatio: 4 / 3,
+          crossAxisSpacing: 30,
+          mainAxisSpacing: 30),
+    );
+  }
+
   Widget build(BuildContext context) {
-    return StreamBuilder(
-        stream: flutterBlue.scanResults,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Text('Empty');
-          } else if (snapshot.error != null) {
-            return Text(snapshot.error.toString());
-          } else if (snapshot.connectionState == ConnectionState.active) {
-            listofalreadypairedboxes = snapshot.data;
-            listofalreadypairedboxes.retainWhere((element) {
-              for (int i = 0; i < widget.listofalreadypairedboxid.length; i++) {
-                if (element.device.id.toString() ==
-                    widget.listofalreadypairedboxid[i].deviceid) {
-                  return true;
-                }
-              }
-              return false;
-            });
-            return Container(
-                child: GridView(
-              padding: EdgeInsets.all(25),
-              children: <Widget>[
-                if (listofalreadypairedboxes.isNotEmpty)
-                  ...listofalreadypairedboxes.map((element) {
-                    return contentInBox(element.device, widget.index);
-                  }).toList()
-              ],
-              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 200,
-                  childAspectRatio: 4 / 3,
-                  crossAxisSpacing: 30,
-                  mainAxisSpacing: 30),
-            ));
-          }
-        });
+    widget.devicesList.removeWhere((element) {
+      Provider.of<pairedboxes>(context);
+      for (int i = 0; i < paireddevices.length; i++) {
+        if (element.id.toString() == paireddevices[i].deviceid) {
+          return false;
+        }
+        return true;
+      }
+    });
+    if (waiting)
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    else
+      return _buildListViewOfDevices();
   }
 }

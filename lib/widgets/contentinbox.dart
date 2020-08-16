@@ -7,6 +7,7 @@ import '../screens/subscreensofmainscreen/addnewboxes.dart';
 class contentInBox extends StatefulWidget {
   BluetoothDevice device;
   int index;
+  bool waiting = false;
   List<BluetoothService> _services = [];
   contentInBox(this.device, this.index);
   @override
