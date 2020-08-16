@@ -25,6 +25,24 @@ class addNewBox extends StatelessWidget {
                           .popAndPushNamed(mainscreen.routeName)),
                   title: Text('Add new boxes')),
               body: FindDevicesScreen(),
+              floatingActionButton: StreamBuilder<bool>(
+                stream: FlutterBlue.instance.isScanning,
+                initialData: false,
+                builder: (c, snapshot) {
+                  if (snapshot.data) {
+                    return FloatingActionButton(
+                      child: Icon(Icons.stop),
+                      onPressed: () => FlutterBlue.instance.stopScan(),
+                      backgroundColor: Colors.red,
+                    );
+                  } else {
+                    return FloatingActionButton(
+                        child: Icon(Icons.search),
+                        onPressed: () => FlutterBlue.instance
+                            .startScan(timeout: Duration(seconds: 2)));
+                  }
+                },
+              ),
             );
           }
           return BluetoothOffScreen(state: state);
@@ -65,6 +83,7 @@ class BluetoothOffScreen extends StatelessWidget {
 }
 
 class FindDevicesScreen extends StatefulWidget {
+  List<MyBox> listofalreadypairedboxid = [];
   @override
   _FindDevicesScreenState createState() => _FindDevicesScreenState();
 }
@@ -76,6 +95,13 @@ class _FindDevicesScreenState extends State<FindDevicesScreen> {
     FlutterBlue.instance
         .startScan(timeout: Duration(seconds: 2))
         .then((value) => FlutterBlue.instance.stopScan());
+    Provider.of<pairedboxes>(context, listen: false)
+        .getListOfpairedBoxes()
+        .then((value) {
+      setState(() {
+        widget.listofalreadypairedboxid = value;
+      });
+    });
   }
 
   @override
@@ -87,6 +113,7 @@ class _FindDevicesScreenState extends State<FindDevicesScreen> {
 
   @override
   Widget build(BuildContext context) {
+   
     return StreamBuilder<List<ScanResult>>(
         stream: FlutterBlue.instance.scanResults,
         initialData: [],
@@ -110,6 +137,25 @@ class _FindDevicesScreenState extends State<FindDevicesScreen> {
               );
             } else if (snapshot.connectionState == ConnectionState.active) {
               var Scanresult = snapshot.data ?? [];
+              Scanresult.retainWhere((element) {
+                for (int i = 0;
+                    i < widget.listofalreadypairedboxid.length;
+                    i++) {
+                  if (element.device.id.toString() ==
+                      widget.listofalreadypairedboxid[i].deviceid) {
+                    return false;
+                  }
+                }
+                return true;
+              });
+              Scanresult.retainWhere((element) {
+                if (element.device.name.isNotEmpty) {
+                  return true;
+                } else {
+                  return false;
+                }
+              });
+               Provider.of<pairedboxes>(context);
               return GridView.builder(
                 itemCount: Scanresult.length ?? 0,
                 itemBuilder: (context, index) {
