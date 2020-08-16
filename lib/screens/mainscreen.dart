@@ -41,7 +41,7 @@ class mainscreenState extends State<mainscreen> {
             PopupMenuButton(
               onSelected: (value) {
                 if (value == 0) {
-                  Navigator.of(context).pushNamed(addNewBox.routename);
+                  Navigator.of(context).popAndPushNamed(addNewBox.routename);
                 }
               },
               itemBuilder: (context) {
