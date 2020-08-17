@@ -28,11 +28,13 @@ class MyApp extends StatelessWidget {
           )
         ],
         child: MaterialApp(
+          debugShowCheckedModeBanner: false,
            theme: ThemeData(
-        primaryColor: kPrimaryColor,
+        primaryColor: Color.fromRGBO(255, 66, 85,1),
+        accentColor: Color.fromRGBO(60, 250, 199,1),
         scaffoldBackgroundColor: Colors.white,
       ),
-          home: WelcomeScreen(),
+          home: mainscreen(),
           routes: {
             mainscreen.routeName: (co) {
               return mainscreen();

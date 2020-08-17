@@ -67,25 +67,27 @@ class boxliststate extends State<boxlist> {
             },
             child: contentInBox(q, widget.index));
       },
-      padding: EdgeInsets.all(25),
+      padding: EdgeInsets.all(20),
+      
       gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+        
           maxCrossAxisExtent: 200,
-          childAspectRatio: 4 / 3,
+          childAspectRatio: 4 / 6,
           crossAxisSpacing: 30,
           mainAxisSpacing: 30),
     );
   }
 
   Widget build(BuildContext context) {
-    widget.devicesList.removeWhere((element) {
-      Provider.of<pairedboxes>(context);
-      for (int i = 0; i < paireddevices.length; i++) {
-        if (element.id.toString() == paireddevices[i].deviceid) {
-          return false;
-        }
-        return true;
-      }
-    });
+    // widget.devicesList.removeWhere((element) {
+    //   Provider.of<pairedboxes>(context);
+    //   for (int i = 0; i < paireddevices.length; i++) {
+    //     if (element.id.toString() == paireddevices[i].deviceid) {
+    //       return false;
+    //     }
+    //     return true;
+    //   }
+    // });
     if (waiting)
       return Center(
         child: CircularProgressIndicator(),

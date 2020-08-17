@@ -35,6 +35,13 @@ class _deviceInformationforpaireddevicesState extends State<deviceInformationfor
     return Scaffold(
         appBar: AppBar(
           title: Text(thisdevice.name),
+           elevation: 10,
+          shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(
+        bottom: Radius.circular(30),
+      ),
+    ),
+          centerTitle: true,
         ),
         body: Container(
             child: isLoading

@@ -33,6 +33,13 @@ class _deviceInformationfornewdevicesState extends State<deviceInformationfornew
     BluetoothDevice thisdevice = args['selecteddevice'];
     return Scaffold(
         appBar: AppBar(
+           elevation: 10,
+          shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(
+        bottom: Radius.circular(30),
+      ),
+    ),
+          centerTitle: true,
           title: Text(thisdevice.name),
         ),
         body: Container(

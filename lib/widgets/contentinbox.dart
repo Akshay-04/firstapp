@@ -3,6 +3,8 @@ import 'package:wardlabs/widgets/deviceinformationfornewdevices.dart';
 import 'package:wardlabs/widgets/deviceinformationforpaireddevices.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import '../screens/subscreensofmainscreen/addnewboxes.dart';
+import 'dart:math';
+import '../screens/designofcard/carddesign.dart';
 
 class contentInBox extends StatefulWidget {
   BluetoothDevice device;
@@ -47,22 +49,26 @@ class contentInBoxState extends State<contentInBox> {
   }
 
   Widget build(BuildContext context) {
+    Random random = new Random();
+    Map<String, Object> select =
+        listofcontainers[random.nextInt(listofcontainers.length)];
     return InkWell(
         onTap: () async {
           await func;
           TransitionToDeviceDetail(context);
         },
         child: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  colors: [Colors.blue.withOpacity(0.7), Colors.blue],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight),
-              borderRadius: BorderRadius.circular(25),
-            ),
-            child: Column(children: <Widget>[
-              Icon(Icons.add_box),
-              Text(widget.device.name),
-            ])));
+          height: 250,
+          width: MediaQuery.of(context).size.width*.4,
+    child: card(
+      primary: select['primary'],
+      chipColor: select['chipColor'],
+      widths: MediaQuery.of(context).size.width,
+      backWidget: select['backWidget'],
+      chipText1: widget.device.name,
+      chipText2: "8 Cources",
+    )
+  
+            ));
   }
 }

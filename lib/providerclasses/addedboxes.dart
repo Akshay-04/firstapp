@@ -77,7 +77,7 @@ class pairedboxes with ChangeNotifier {
       }
       listofpairedboxes.removeAt(index);
       notifyListeners();
-    } 
+    }
   }
 
   bool checkduplicateboxes(BluetoothDevice b) {

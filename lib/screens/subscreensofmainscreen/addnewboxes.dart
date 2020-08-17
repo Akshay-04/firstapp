@@ -19,6 +19,13 @@ class addNewBox extends StatelessWidget {
           if (state == BluetoothState.on) {
             return Scaffold(
               appBar: AppBar(
+          shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(
+        bottom: Radius.circular(30),
+      ),
+    ),
+    elevation: 10,
+          centerTitle: true,
                   leading: IconButton(
                       icon: Icon(Icons.arrow_back),
                       onPressed: () => Navigator.of(context)
@@ -168,7 +175,7 @@ class _FindDevicesScreenState extends State<FindDevicesScreen> {
                 shrinkWrap: true,
                 gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                     maxCrossAxisExtent: 200,
-                    childAspectRatio: 4 / 3,
+                    childAspectRatio: 4 / 6,
                     crossAxisSpacing: 30,
                     mainAxisSpacing: 30),
               );
