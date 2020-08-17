@@ -6,6 +6,7 @@ import 'package:wardlabs/providerclasses/addedboxes.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:wardlabs/providerclasses/basicbox.dart';
 import '../screens/subscreensofmainscreen/addnewboxes.dart';
+import 'package:wardlabs/providerclasses/auth.dart';
 
 class deviceInformationforpaireddevices extends StatefulWidget {
   static String routeName = '/deviceInformationforpaireddevices';
@@ -53,13 +54,13 @@ class _deviceInformationforpaireddevicesState extends State<deviceInformationfor
                       
                         RaisedButton(
                             child: Text('Unpair'),
-                            onPressed: () {
+                            onPressed: () async {
                               setState(() {
                                 isLoading = true;
                               });
-
+                                  String uid = await Provider.of<authentiation>(context).getuid();
                               Provider.of<pairedboxes>(context, listen: false)
-                                  .unpairbox(thisdevice);
+                                  .unpairbox(thisdevice,uid);
 
                               Navigator.pop(context);
                             }),

@@ -51,7 +51,7 @@ class _deviceInformationfornewdevicesState extends State<deviceInformationfornew
                     child: Column(children: <Widget>[
                       
                         RaisedButton(
-                          onPressed: () async{
+                          onPressed: (){
                             setState(() {
                               isLoading = true;
                             });

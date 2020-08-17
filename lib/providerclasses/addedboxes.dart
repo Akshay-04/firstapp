@@ -45,7 +45,7 @@ class pairedboxes with ChangeNotifier {
     }
   }
 
-  Future<void> pairnewbox(BluetoothDevice device,BuildContext context) async {
+  Future<void> pairnewbox(BluetoothDevice device, BuildContext context) async {
     // print('here1');
     String uid = await Provider.of<authentiation>(context).getuid();
     // print('here2');
@@ -70,11 +70,11 @@ class pairedboxes with ChangeNotifier {
           .add(MyBox(json.decode(value.body)['Name'], device.id.toString()));
       print('paired:');
       print(listofpairedboxes[listofpairedboxes.length - 1].deviceid);
-    notifyListeners();
+      notifyListeners();
     });
   }
 
-  void unpairbox(BluetoothDevice deletebox) {
+  Future<void> unpairbox(BluetoothDevice deletebox,String uid) async {
     int index = -1;
     String temp = '';
     for (int i = 0; i < listofpairedboxes.length; i++) {
@@ -87,7 +87,7 @@ class pairedboxes with ChangeNotifier {
     }
     if (index >= 0) {
       try {
-        http.delete('https://wardlabs.firebaseio.com/paireddevices/$temp.json');
+       await http.delete('https://wardlabs.firebaseio.com/$uid/paireddevices/$temp.json');
       } catch (error) {
         print(error.toString());
       }
