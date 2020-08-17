@@ -49,7 +49,9 @@ class mainscreenState extends State<mainscreen> {
 
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(60), // here the desired height
+          child: AppBar(
           elevation: 10,
           title: Text(_screens[widget.screenindex]['Title']),
           shape: RoundedRectangleBorder(
@@ -75,7 +77,7 @@ class mainscreenState extends State<mainscreen> {
                 },
               )
           ],
-        ),
+        )),
         drawer: drawerScreen(),
         body: _screens[widget.screenindex]['screen'],
         bottomNavigationBar: BottomNavyBar(

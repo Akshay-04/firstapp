@@ -32,7 +32,9 @@ class _deviceInformationfornewdevicesState extends State<deviceInformationfornew
         ModalRoute.of(context).settings.arguments as Map<String, Object>;
     BluetoothDevice thisdevice = args['selecteddevice'];
     return Scaffold(
-        appBar: AppBar(
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(60), // here the desired height
+          child:AppBar(
            elevation: 10,
           shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(
@@ -41,7 +43,7 @@ class _deviceInformationfornewdevicesState extends State<deviceInformationfornew
     ),
           centerTitle: true,
           title: Text(thisdevice.name),
-        ),
+        )),
         body: Container(
             child: isLoading
                 ? Center(child: CircularProgressIndicator())
@@ -49,12 +51,12 @@ class _deviceInformationfornewdevicesState extends State<deviceInformationfornew
                     child: Column(children: <Widget>[
                       
                         RaisedButton(
-                          onPressed: () {
+                          onPressed: () async{
                             setState(() {
                               isLoading = true;
                             });
                             Provider.of<pairedboxes>(context, listen: false)
-                                .pairnewbox(thisdevice)
+                                .pairnewbox(thisdevice,context)
                                 .then((_) {
                               setState(() {
                                 isLoading = false;

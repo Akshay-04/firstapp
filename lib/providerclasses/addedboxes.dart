@@ -1,7 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:wardlabs/providerclasses/auth.dart';
+import 'package:provider/provider.dart';
 
 const String firebaseurl = 'https://wardlabs.firebaseio.com/paireddevices.json';
 
@@ -41,10 +45,22 @@ class pairedboxes with ChangeNotifier {
     }
   }
 
-  Future<void> pairnewbox(BluetoothDevice device) async {
-    print('here1');
+  Future<void> pairnewbox(BluetoothDevice device,BuildContext context) async {
+    // print('here1');
+    String uid = await Provider.of<authentiation>(context).getuid();
+    // print('here2');
+    // try {
+    //   Future<DocumentReference> idgenerated = Firestore.instance
+    //       .collection('users')
+    //       .document(uid)
+    //       .collection('paireddevices')
+    //       .add({'devicename': device.name, 'deviceid': device.id});
+    // } catch (error) {
+    //   print(error);
+    // }
+
     await http
-        .post(firebaseurl,
+        .post('https://wardlabs.firebaseio.com/$uid/paireddevices.json',
             body: json.encode(
                 {'deviceid': device.id.toString(), 'devicename': device.name}))
         .then((value) {
@@ -54,7 +70,7 @@ class pairedboxes with ChangeNotifier {
           .add(MyBox(json.decode(value.body)['Name'], device.id.toString()));
       print('paired:');
       print(listofpairedboxes[listofpairedboxes.length - 1].deviceid);
-      notifyListeners();
+    notifyListeners();
     });
   }
 

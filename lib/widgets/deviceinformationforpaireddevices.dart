@@ -33,7 +33,9 @@ class _deviceInformationforpaireddevicesState extends State<deviceInformationfor
     BluetoothDevice thisdevice = args['selecteddevice'];
     List<BluetoothService> _services = args['services'];
     return Scaffold(
-        appBar: AppBar(
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(60), // here the desired height
+          child:AppBar(
           title: Text(thisdevice.name),
            elevation: 10,
           shape: RoundedRectangleBorder(
@@ -42,7 +44,7 @@ class _deviceInformationforpaireddevicesState extends State<deviceInformationfor
       ),
     ),
           centerTitle: true,
-        ),
+        )),
         body: Container(
             child: isLoading
                 ? Center(child: CircularProgressIndicator())

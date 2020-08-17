@@ -59,7 +59,7 @@ class contentInBoxState extends State<contentInBox> {
         },
         child: Container(
           height: 250,
-          width: MediaQuery.of(context).size.width*.4,
+          width: MediaQuery.of(context).size.width*.5,
     child: card(
       primary: select['primary'],
       chipColor: select['chipColor'],

@@ -18,7 +18,9 @@ class addNewBox extends StatelessWidget {
           final state = snapshot.data;
           if (state == BluetoothState.on) {
             return Scaffold(
-              appBar: AppBar(
+              appBar: PreferredSize(
+          preferredSize: Size.fromHeight(60), // here the desired height
+          child:AppBar(
           shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(
         bottom: Radius.circular(30),
@@ -30,7 +32,7 @@ class addNewBox extends StatelessWidget {
                       icon: Icon(Icons.arrow_back),
                       onPressed: () => Navigator.of(context)
                           .popAndPushNamed(mainscreen.routeName)),
-                  title: Text('Add new boxes')),
+                  title: Text('Add new boxes'))),
               body: FindDevicesScreen(),
               floatingActionButton: StreamBuilder<bool>(
                 stream: FlutterBlue.instance.isScanning,
