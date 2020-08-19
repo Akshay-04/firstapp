@@ -50,25 +50,29 @@ class contentInBoxState extends State<contentInBox> {
 
   Widget build(BuildContext context) {
     Random random = new Random();
+    bool loading = false;
     Map<String, Object> select =
         listofcontainers[random.nextInt(listofcontainers.length)];
+    if (loading)
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    else  
     return InkWell(
         onTap: () async {
           await func;
           TransitionToDeviceDetail(context);
         },
         child: Container(
-          height: 250,
-          width: MediaQuery.of(context).size.width*.5,
-    child: card(
-      primary: select['primary'],
-      chipColor: select['chipColor'],
-      widths: MediaQuery.of(context).size.width,
-      backWidget: select['backWidget'],
-      chipText1: widget.device.name,
-      chipText2: "8 Cources",
-    )
-  
-            ));
+            height: MediaQuery.of(context).size.height * 0.4,
+            width: MediaQuery.of(context).size.width * 0.5,
+            child: card(
+              primary: select['primary'],
+              chipColor: select['chipColor'],
+              widths: MediaQuery.of(context).size.width * .5,
+              backWidget: select['backWidget'],
+              chipText1: widget.device.name,
+              chipText2: "online",
+            )));
   }
 }

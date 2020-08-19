@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:wardlabs/ScreensforAuth/Screens/Welcome/welcome_screen.dart';
 import 'package:wardlabs/providerclasses/addedboxes.dart';
 import 'package:wardlabs/providerclasses/auth.dart';
-import 'package:wardlabs/providerclasses/basicbox.dart';
+import 'package:wardlabs/providerclasses/basicboxprev.dart';
 import 'package:wardlabs/screens/signup.dart';
 import 'package:wardlabs/screens/subscreensofmainscreen/addnewboxes.dart';
 import 'package:wardlabs/widgets/deviceinformationfornewdevices.dart';

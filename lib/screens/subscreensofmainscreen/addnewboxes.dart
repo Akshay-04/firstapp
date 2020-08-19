@@ -1,7 +1,9 @@
+import 'package:wardlabs/providerclasses/auth.dart';
+import 'package:wardlabs/screens/drawerscreen.dart';
 import 'package:wardlabs/screens/mainscreen.dart';
 import 'package:wardlabs/widgets/contentinbox.dart';
 import 'package:provider/provider.dart';
-import '../../providerclasses/basicbox.dart';
+import '../../providerclasses/basicboxprev.dart';
 import 'package:flutter/material.dart';
 import '../../providerclasses/addedboxes.dart';
 import 'package:flutter_blue/flutter_blue.dart';
@@ -18,21 +20,18 @@ class addNewBox extends StatelessWidget {
           final state = snapshot.data;
           if (state == BluetoothState.on) {
             return Scaffold(
+              drawer: drawerScreen(),
               appBar: PreferredSize(
-          preferredSize: Size.fromHeight(60), // here the desired height
-          child:AppBar(
-          shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(
-        bottom: Radius.circular(30),
-      ),
-    ),
-    elevation: 10,
-          centerTitle: true,
-                  leading: IconButton(
-                      icon: Icon(Icons.arrow_back),
-                      onPressed: () => Navigator.of(context)
-                          .popAndPushNamed(mainscreen.routeName)),
-                  title: Text('Add new boxes'))),
+                  preferredSize: Size.fromHeight(60), // here the desired height
+                  child: AppBar(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(
+                          bottom: Radius.circular(30),
+                        ),
+                      ),
+                      elevation: 10,
+                      centerTitle: true,
+                      title: Text('Add new boxes'))),
               body: FindDevicesScreen(),
               floatingActionButton: StreamBuilder<bool>(
                 stream: FlutterBlue.instance.isScanning,
@@ -104,17 +103,22 @@ class _FindDevicesScreenState extends State<FindDevicesScreen> {
     FlutterBlue.instance
         .startScan(timeout: Duration(seconds: 2))
         .then((value) => FlutterBlue.instance.stopScan());
-    Provider.of<pairedboxes>(context, listen: false)
-        .getListOfpairedBoxes()
-        .then((value) {
-      setState(() {
-        widget.listofalreadypairedboxid = value;
-        value.forEach((element) {
-          print(element);
+    authentiation().getuid().then((uid) {
+      Future.delayed(Duration(seconds: 0)).then((_) {
+              var temp=Provider.of<pairedboxes>(context)
+          .getListOfpairedBoxes(uid).then((value){
+                    setState(() {
+          widget.listofalreadypairedboxid = value;
         });
-      });
-    });
+          });
+
+      }
+     
+    );
+   
+  });
   }
+
 
   @override
   void dispose() {
@@ -125,87 +129,73 @@ class _FindDevicesScreenState extends State<FindDevicesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<ScanResult>>(
-        stream: FlutterBlue.instance.scanResults,
-        initialData: [],
-        builder: (c, snapshot) {
-          if (snapshot.hasError) {
-            return Center(
-              child: Text('Something went wrong!'),
-            );
-          } else {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
-                child: Text('Scanning'),
-              );
-            } else if (snapshot.connectionState == ConnectionState.done) {
-              return Center(
-                child: Text('Done!'),
-              );
-            } else if (snapshot.data.isEmpty) {
-              return Center(
-                child: Text('Empty'),
-              );
-            } else if (snapshot.connectionState == ConnectionState.active) {
-              var Scanresult = snapshot.data ?? [];
-               Scanresult.retainWhere((element) {
-                 for (int i = 0;
-                     i < widget.listofalreadypairedboxid.length;
-                     i++) {
-                   if (element.device.id.toString() ==
-                       widget.listofalreadypairedboxid[i].deviceid) {
-                     return false;
-                   }
-                 }
-                 return true;
-               });
-              Scanresult.retainWhere((element) {
-                if (element.device.name.isNotEmpty) {
-                  return true;
-                } else {
-                 return false;
+    return Wrap(
+      children: [
+        StreamBuilder<List<ScanResult>>(
+            stream: FlutterBlue.instance.scanResults,
+            initialData: [],
+            builder: (c, snapshot) {
+              if (snapshot.hasError) {
+                return Center(
+                  child: Text('Something went wrong!'),
+                );
+              } else {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(
+                    child: Text('Scanning'),
+                  );
+                } else if (snapshot.connectionState == ConnectionState.done) {
+                  return Center(
+                    child: Text('Done!'),
+                  );
+                } else if (snapshot.data.isEmpty) {
+                  return Center(
+                    child: Text('Empty'),
+                  );
+                } else if (snapshot.connectionState == ConnectionState.active) {
+                  var Scanresult = snapshot.data ?? [];
+                  Scanresult.retainWhere((element) {
+                    for (int i = 0;
+                        i < widget.listofalreadypairedboxid.length;
+                        i++) {
+                      if (element.device.id.toString() ==
+                          widget.listofalreadypairedboxid[i].deviceid) {
+                        return false;
+                      }
+                    }
+                    return true;
+                  });
+                  Scanresult.retainWhere((element) {
+                    if (element.device.name.isNotEmpty) {
+                      return true;
+                    } else {
+                      return false;
+                    }
+                  });
+                  Provider.of<pairedboxes>(context);
+                  return Column(
+                      children: Scanresult.map((e) {
+                    return contentInBox(e.device, 1) as Widget;
+                  }).toList());
                 }
-              });
-              Provider.of<pairedboxes>(context);
-              return GridView.builder(
-                itemCount: Scanresult.length ?? 0,
-                itemBuilder: (context, index) {
-                  BluetoothDevice q = Scanresult[index].device;
-                  return contentInBox(q, 1);
-                },
-                padding: EdgeInsets.all(25),
-                shrinkWrap: true,
-                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 200,
-                    childAspectRatio: 4 / 6,
-                    crossAxisSpacing: 30,
-                    mainAxisSpacing: 30),
-              );
-            } else if (snapshot.data.isEmpty) {
-              Center(
-                child: Text('No device found'),
-              );
-            }
-          }
-        });
-    floatingActionButton:
-    StreamBuilder<bool>(
-      stream: FlutterBlue.instance.isScanning,
-      initialData: false,
-      builder: (c, snapshot) {
-        if (snapshot.data) {
-          return FloatingActionButton(
-            child: Icon(Icons.stop),
-            onPressed: () => FlutterBlue.instance.stopScan(),
-            backgroundColor: Colors.red,
-          );
-        } else {
-          return FloatingActionButton(
-              child: Icon(Icons.search),
-              onPressed: () => FlutterBlue.instance
-                  .startScan(timeout: Duration(seconds: 4)));
-        }
-      },
+              }
+            }),
+      ],
     );
   }
 }
+
+// GridView.builder(
+//                 itemCount: Scanresult.length ?? 0,
+//                 itemBuilder: (context, index) {
+//                   BluetoothDevice q = Scanresult[index].device;
+//                   return contentInBox(q, 1);
+//                 },
+//                 padding: EdgeInsets.all(25),
+//                 shrinkWrap: true,
+//                 gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+//                     maxCrossAxisExtent: 330,
+//                     childAspectRatio: 5/ 8,
+//                     crossAxisSpacing: 30,
+//                     mainAxisSpacing: 30),
+//               );

@@ -1,6 +1,7 @@
+import 'package:wardlabs/providerclasses/auth.dart';
 import 'package:wardlabs/widgets/contentinbox.dart';
 import 'package:provider/provider.dart';
-import '../../providerclasses/basicbox.dart';
+import '../../providerclasses/basicboxprev.dart';
 import 'package:flutter/material.dart';
 import '../../providerclasses/addedboxes.dart';
 import 'package:flutter_blue/flutter_blue.dart';
@@ -45,54 +46,41 @@ class boxliststate extends State<boxlist> {
       }
     });
     flutterBlue.startScan();
-    Provider.of<pairedboxes>(context, listen: false)
-        .getListOfpairedBoxes()
-        .then((value) {
-      setState(() {
-        paireddevices = value;
+    authentiation().getuid().then((value) {
+      pairedboxes().getListOfpairedBoxes(value).then((value) {
+        setState(() {
+          paireddevices = value;
+        });
       });
     });
   }
 
-  GridView _buildListViewOfDevices() {
-    return GridView.builder(
-      itemCount: widget.devicesList.length,
-      itemBuilder: (context, index) {
-        BluetoothDevice q = widget.devicesList[index];
-        return InkWell(
-            onTap: () {
-              setState(() {
-                waiting = true;
-              });
-            },
-            child: contentInBox(q, widget.index));
-      },
-      padding: EdgeInsets.all(20),
-      
-      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-        
-          maxCrossAxisExtent: 200,
-          childAspectRatio: 4 / 6,
-          crossAxisSpacing: 30,
-          mainAxisSpacing: 30),
-    );
+ 
+  Wrap _buildListViewOfDevices(List<BluetoothDevice> temp) {
+    Provider.of<pairedboxes>(context);
+
+    return Wrap(
+        children: temp.map((e) {
+      return contentInBox(e, widget.index);
+    }).toList());
   }
 
   Widget build(BuildContext context) {
-    // widget.devicesList.removeWhere((element) {
-    //   Provider.of<pairedboxes>(context);
-    //   for (int i = 0; i < paireddevices.length; i++) {
-    //     if (element.id.toString() == paireddevices[i].deviceid) {
-    //       return false;
-    //     }
-    //     return true;
-    //   }
-    // });
-    if (waiting)
-      return Center(
-        child: CircularProgressIndicator(),
-      );
-    else
-      return _buildListViewOfDevices();
+    print('paired devices');
+    paireddevices.forEach((element) {
+      print(element.deviceid);
+    });
+    List<BluetoothDevice> temp = [...widget.devicesList];
+    print(temp.length);
+    temp.retainWhere((element) {
+      for (int i = 0; i < paireddevices.length; i++) {
+        if (element.id.toString() == paireddevices[i].deviceid) {
+          return true;
+        }
+      }
+      return false;
+    });
+
+    return _buildListViewOfDevices(temp);
   }
 }

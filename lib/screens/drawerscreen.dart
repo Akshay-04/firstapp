@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:wardlabs/screens/mainscreen.dart';
+import '../providerclasses/addedboxes.dart';
+import '../screens/subscreensofmainscreen/addnewboxes.dart';
 
 class drawerScreen extends StatelessWidget {
   @override
@@ -21,7 +24,16 @@ class drawerScreen extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.home),
             title: Text('Home'),
-            onTap: () => {},
+            onTap: () => {
+              Navigator.of(context).pushReplacementNamed(mainscreen.routeName)
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.add_box),
+            title: Text('Add New Box'),
+            onTap: () => {
+               Navigator.of(context).pushReplacementNamed(addNewBox.routename)
+            },
           ),
           ListTile(
             leading: Icon(Icons.verified_user),

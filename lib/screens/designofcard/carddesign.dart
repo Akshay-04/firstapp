@@ -9,7 +9,7 @@ Widget card(
     Widget backWidget,
     Color chipColor = LightColor.orange,
     @required double widths}) {
-  widths = widths * .4;
+  widths = widths;
   return Container(
       height: 250,
       width: widths,

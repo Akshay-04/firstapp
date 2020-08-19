@@ -59,24 +59,7 @@ class mainscreenState extends State<mainscreen> {
         bottom: Radius.circular(30),
       ),
     ),
-          centerTitle: true,
-          actions: <Widget>[
-            if (widget.screenindex == 0)
-              PopupMenuButton(
-                onSelected: (value) {
-                  if (value == 0) {
-                    Navigator.of(context).popAndPushNamed(addNewBox.routename);
-                  }
-                },
-                itemBuilder: (context) {
-                  List<String> items = ['Add new box'];
-                  List<PopupMenuItem> t = items
-                      .map((e) => PopupMenuItem(child: Text(e), value: 0))
-                      .toList();
-                  return t;
-                },
-              )
-          ],
+          centerTitle: true,  
         )),
         drawer: drawerScreen(),
         body: _screens[widget.screenindex]['screen'],
@@ -91,6 +74,7 @@ class mainscreenState extends State<mainscreen> {
                 duration: Duration(milliseconds: 300), curve: Curves.ease);
           }),
           items: [
+  
             BottomNavyBarItem(
               icon: Icon(Icons.home),
                 inactiveColor: Theme.of(context).primaryColor,

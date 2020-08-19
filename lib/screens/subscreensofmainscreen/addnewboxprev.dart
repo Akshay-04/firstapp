@@ -1,6 +1,6 @@
 import 'package:wardlabs/widgets/contentinbox.dart';
 import 'package:provider/provider.dart';
-import '../../providerclasses/basicbox.dart';
+import '../../providerclasses/basicboxprev.dart';
 import 'package:flutter/material.dart';
 import '../../providerclasses/addedboxes.dart';
 import 'package:flutter_blue/flutter_blue.dart';
