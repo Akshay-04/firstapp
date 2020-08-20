@@ -23,16 +23,17 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
         providers: [
+                  ChangeNotifierProvider(
+            create: (context) {
+              return authentiation();
+            },
+          ),
           ChangeNotifierProvider(
             create: (context) {
               return pairedboxes();
             },
           ),
-          ChangeNotifierProvider(
-            create: (context) {
-              return authentiation();
-            },
-          )
+
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,

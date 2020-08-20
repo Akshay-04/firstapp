@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:wardlabs/providerclasses/auth.dart';
+import 'package:wardlabs/providerclasses/errorhandling/autherror.dart';
 import 'package:wardlabs/screens/mainscreen.dart';
 import '../../../Screens/Login/login_screen.dart';
 import './background.dart';
@@ -8,18 +10,16 @@ import '../../../components/rounded_button.dart';
 import '../../../components/rounded_input_field.dart';
 import '../../../components/rounded_password_field.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 
 class Body extends StatelessWidget {
-   Body({
+  Body({
     Key key,
   }) : super(key: key);
 
-
-
-  
   @override
   Widget build(BuildContext context) {
-    String email="", password="";
+    String email = "", password = "";
     Size size = MediaQuery.of(context).size;
     return Background(
       child: SingleChildScrollView(
@@ -48,8 +48,30 @@ class Body extends StatelessWidget {
             ),
             RoundedButton(
               text: "SIGNUP",
-              press: () {
-                 signup(context, email, password);
+              press: () async {
+                var result =
+                    await Provider.of<authentiation>(context, listen: false)
+                        .signup(email, password);
+                if (result == AuthResultStatus.successful) {
+                  Navigator.pushReplacementNamed(context, mainscreen.routeName);
+                } else {
+                  String message =
+                      AuthExceptionHandler.generateExceptionMessage(result);
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text('Could not signup'),
+                      content: Text(message),
+                      actions: [
+                        FlatButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text('Okay'))
+                      ],
+                    ),
+                  );
+                }
               },
             ),
             SizedBox(height: size.height * 0.03),
@@ -72,18 +94,3 @@ class Body extends StatelessWidget {
     );
   }
 }
-
-Future<void> signup(BuildContext context, String email, String password) async {
-  try {
-    print(email);
-    print(password);
-    AuthResult result = await FirebaseAuth.instance
-        .createUserWithEmailAndPassword(email: email, password: password);
-    Navigator.popAndPushNamed(context, mainscreen.routeName, arguments: result);
-  } catch (e) {
-    print('error ocg');
-    print(e);
-  }
-  return;
-}
-

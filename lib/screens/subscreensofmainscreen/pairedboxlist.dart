@@ -46,16 +46,17 @@ class boxliststate extends State<boxlist> {
       }
     });
     flutterBlue.startScan();
-    authentiation().getuid().then((value) {
-      pairedboxes().getListOfpairedBoxes(value).then((value) {
-        setState(() {
-          paireddevices = value;
-        });
+  }
+@override
+void didChangeDependencies() {
+  super.didChangeDependencies();
+     String uid = Provider.of<authentiation>(context).getuid();
+    Provider.of<pairedboxes>(context).getListOfpairedBoxes(uid).then((value) {
+      setState(() {
+        paireddevices = value;
       });
     });
-  }
-
- 
+}
   Wrap _buildListViewOfDevices(List<BluetoothDevice> temp) {
     Provider.of<pairedboxes>(context);
 

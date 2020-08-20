@@ -103,22 +103,8 @@ class _FindDevicesScreenState extends State<FindDevicesScreen> {
     FlutterBlue.instance
         .startScan(timeout: Duration(seconds: 2))
         .then((value) => FlutterBlue.instance.stopScan());
-    authentiation().getuid().then((uid) {
-      Future.delayed(Duration(seconds: 0)).then((_) {
-              var temp=Provider.of<pairedboxes>(context)
-          .getListOfpairedBoxes(uid).then((value){
-                    setState(() {
-          widget.listofalreadypairedboxid = value;
-        });
-          });
-
-      }
-     
-    );
-   
-  });
+ 
   }
-
 
   @override
   void dispose() {

@@ -18,16 +18,9 @@ class MyBox {
 class pairedboxes with ChangeNotifier {
   List<MyBox> listofpairedboxes = List<MyBox>();
   pairedboxes() {
-    List<MyBox> listofpairedboxes = List<MyBox>();
-    authentiation().getuid().then((va) {
-      http
-          .get('https://wardlabs.firebaseio.com/$va/paireddevices.json')
-          .then((value) {
-        if (json.decode(value.body) != null) {
-          listofpairedboxes = json.decode(value.body)['Name'];
-        }
-      });
-    });
+     listofpairedboxes = List<MyBox>();
+  
+    
   }
   Future<List<MyBox>> getListOfpairedBoxes(String uid) async {
     // listofpairedboxes = [];
@@ -88,10 +81,9 @@ class pairedboxes with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> unpairbox(BluetoothDevice deletebox) async {
+  Future<void> unpairbox(BluetoothDevice deletebox,String uid) async {
     int index = -1;
     String temp = '';
-    String uid = await authentiation().getuid();
     var templist = await getListOfpairedBoxes(uid);
     for (int i = 0; i < templist.length; i++) {
       print(deletebox.id.toString());

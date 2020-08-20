@@ -65,9 +65,9 @@ class _deviceInformationfornewdevicesState
                             isLoading = true;
                           });
                           print('first');
-                          String uid = await authentiation().getuid();
+                          String uid =  Provider.of<authentiation>(context,listen: false).getuid();
                           print('second');
-                          await pairedboxes().pairnewbox(thisdevice, uid);
+                          await Provider.of<pairedboxes>(context,listen: false).pairnewbox(thisdevice, uid);
 
                           print('reached here');
                           setState(() {

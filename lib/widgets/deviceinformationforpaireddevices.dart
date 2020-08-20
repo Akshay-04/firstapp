@@ -59,9 +59,10 @@ class _deviceInformationforpaireddevicesState
                             setState(() {
                               isLoading = true;
                             });
+                            String uid=Provider.of<authentiation>(context,listen: false).getuid();
                             await Provider.of<pairedboxes>(context,
                                     listen: false)
-                                .unpairbox(thisdevice);
+                                .unpairbox(thisdevice,uid);
                             setState(() {
                               isLoading = false;
                             });
