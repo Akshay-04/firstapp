@@ -51,7 +51,8 @@ class boxliststate extends State<boxlist> {
 void didChangeDependencies() {
   super.didChangeDependencies();
      String uid = Provider.of<authentiation>(context).getuid();
-    Provider.of<pairedboxes>(context).getListOfpairedBoxes(uid).then((value) {
+     String authkey = Provider.of<authentiation>(context).authkey;
+    Provider.of<pairedboxes>(context).getListOfpairedBoxes(uid,authkey).then((value) {
       setState(() {
         paireddevices = value;
       });

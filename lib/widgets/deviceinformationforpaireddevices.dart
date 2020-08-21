@@ -60,9 +60,10 @@ class _deviceInformationforpaireddevicesState
                               isLoading = true;
                             });
                             String uid=Provider.of<authentiation>(context,listen: false).getuid();
+                             String authkey = Provider.of<authentiation>(context,listen: false).authkey;
                             await Provider.of<pairedboxes>(context,
                                     listen: false)
-                                .unpairbox(thisdevice,uid);
+                                .unpairbox(thisdevice,uid,authkey);
                             setState(() {
                               isLoading = false;
                             });

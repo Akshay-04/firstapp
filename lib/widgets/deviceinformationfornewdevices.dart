@@ -66,8 +66,9 @@ class _deviceInformationfornewdevicesState
                           });
                           print('first');
                           String uid =  Provider.of<authentiation>(context,listen: false).getuid();
+                           String authkey = Provider.of<authentiation>(context,listen: false).authkey;
                           print('second');
-                          await Provider.of<pairedboxes>(context,listen: false).pairnewbox(thisdevice, uid);
+                          await Provider.of<pairedboxes>(context,listen: false).pairnewbox(thisdevice, uid,authkey);
 
                           print('reached here');
                           setState(() {

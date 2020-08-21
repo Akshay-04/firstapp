@@ -23,45 +23,49 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
         providers: [
-                  ChangeNotifierProvider(
+          ChangeNotifierProvider(
             create: (context) {
               return authentiation();
             },
           ),
-          ChangeNotifierProvider(
+           ChangeNotifierProvider(
             create: (context) {
               return pairedboxes();
-            },
-          ),
-
+            },)
         ],
-        child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            primaryColor: Color.fromRGBO(255, 66, 85, 1),
-            accentColor: Color.fromRGBO(60, 250, 199, 1),
-            scaffoldBackgroundColor: Colors.white,
-          ),
-          home: WelcomeScreen(),
-          routes: {
-            mainscreen.routeName: (co) {
-              return mainscreen();
-            },
-            Signup.routeName: (co) {
-              return Signup();
-            },
-            deviceInformationfornewdevices.routeName: (cont) {
-              return deviceInformationfornewdevices();
-            },
-            settingscreen.routeName: (con) {
-              return settingscreen();
-            },
-            deviceInformationforpaireddevices.routeName: (cont) {
-              return deviceInformationforpaireddevices();
-            },
-            addNewBox.routename: (context) {
-              return addNewBox();
-            }
+        child: Consumer<authentiation>(
+          builder: (context, value, child) {
+            bool islogged = value.checktoken;
+            return MaterialApp(
+              key: UniqueKey(),
+              debugShowCheckedModeBanner: false,
+              theme: ThemeData(
+                primaryColor: Color.fromRGBO(255, 66, 85, 1),
+                accentColor: Color.fromRGBO(60, 250, 199, 1),
+                scaffoldBackgroundColor: Colors.white,
+              ),
+              home: islogged ? mainscreen(UniqueKey()) : WelcomeScreen(),
+              routes: {
+                mainscreen.routeName: (co) {
+                  return mainscreen(UniqueKey());
+                },
+                Signup.routeName: (co) {
+                  return Signup();
+                },
+                deviceInformationfornewdevices.routeName: (cont) {
+                  return deviceInformationfornewdevices();
+                },
+                settingscreen.routeName: (con) {
+                  return settingscreen();
+                },
+                deviceInformationforpaireddevices.routeName: (cont) {
+                  return deviceInformationforpaireddevices();
+                },
+                addNewBox.routename: (context) {
+                  return addNewBox();
+                }
+              },
+            );
           },
         ));
   }

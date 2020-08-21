@@ -53,7 +53,7 @@ class Body extends StatelessWidget {
                     await Provider.of<authentiation>(context, listen: false)
                         .signup(email, password);
                 if (result == AuthResultStatus.successful) {
-                  Navigator.pushReplacementNamed(context, mainscreen.routeName);
+                  //Navigator.pushReplacementNamed(context, mainscreen.routeName);
                 } else {
                   String message =
                       AuthExceptionHandler.generateExceptionMessage(result);

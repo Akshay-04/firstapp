@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:wardlabs/providerclasses/auth.dart';
 import 'package:wardlabs/screens/mainscreen.dart';
 import '../providerclasses/addedboxes.dart';
 import '../screens/subscreensofmainscreen/addnewboxes.dart';
@@ -44,7 +46,9 @@ class drawerScreen extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.exit_to_app),
             title: Text('Logout'),
-            onTap: () => {Navigator.of(context).pop()},
+            onTap: () => {
+              Provider.of<authentiation>(context,listen: false).logout()
+            },
           ),
         ],
       ),

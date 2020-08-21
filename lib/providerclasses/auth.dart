@@ -6,6 +6,7 @@ class authentiation with ChangeNotifier {
   final _auth = FirebaseAuth.instance;
   AuthResultStatus _status;
   FirebaseUser authuser;
+  IdTokenResult token;
 
   ///
   /// Helper Functions
@@ -14,9 +15,13 @@ class authentiation with ChangeNotifier {
     try {
       AuthResult authResult = await _auth.createUserWithEmailAndPassword(
           email: email, password: pass);
+
       if (authResult.user != null) {
         authuser = await _auth.currentUser();
+        token = await authuser.getIdToken(refresh: true);
+
         _status = AuthResultStatus.successful;
+        notifyListeners();
       } else {
         _status = AuthResultStatus.undefined;
       }
@@ -27,14 +32,31 @@ class authentiation with ChangeNotifier {
     return _status;
   }
 
-  Future<AuthResultStatus> login(email, pass) async {
+  bool get checktoken {
+    if (token == null) {
+      return false;
+    }
+    //  else if (token.expirationTime.isAfter(DateTime.now())) {
+    //   return false;
+    // }
+    print('returned true');
+    return true;
+  }
+
+  String get authkey {
+    return token.token;
+  }
+
+  Future<AuthResultStatus> login(String email, String pass) async {
     try {
-      final authResult =
+      AuthResult authResult =
           await _auth.signInWithEmailAndPassword(email: email, password: pass);
 
       if (authResult.user != null) {
         authuser = await _auth.currentUser();
+        token = await authuser.getIdToken();
         _status = AuthResultStatus.successful;
+        notifyListeners();
       } else {
         _status = AuthResultStatus.undefined;
       }
@@ -46,8 +68,10 @@ class authentiation with ChangeNotifier {
     return _status;
   }
 
-  logout() {
-    _auth.signOut();
+  logout() async {
+    await _auth.signOut();
+    token = null;
+    notifyListeners();
   }
 
   String getuid() {

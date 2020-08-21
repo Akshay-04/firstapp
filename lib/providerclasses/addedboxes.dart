@@ -18,16 +18,14 @@ class MyBox {
 class pairedboxes with ChangeNotifier {
   List<MyBox> listofpairedboxes = List<MyBox>();
   pairedboxes() {
-     listofpairedboxes = List<MyBox>();
-  
-    
+    listofpairedboxes = List<MyBox>();
   }
-  Future<List<MyBox>> getListOfpairedBoxes(String uid) async {
+  Future<List<MyBox>> getListOfpairedBoxes(String uid,String authkey) async {
     // listofpairedboxes = [];
     var res;
     try {
       res = await http
-          .get('https://wardlabs.firebaseio.com/$uid/paireddevices.json');
+          .get('https://wardlabs.firebaseio.com/$uid/paireddevices.json?auth=$authkey');
     } catch (error) {
       print(error.toString());
     }
@@ -37,7 +35,7 @@ class pairedboxes with ChangeNotifier {
     if (temp != null) {
       temp.forEach((key, value) {
         print(value);
-        listofpairedboxes.add(MyBox(key, value['deviceid']));
+        listofpairedboxes.add(MyBox(key, value['deviceid'].toString()));
       });
       notifyListeners();
     }
@@ -52,7 +50,7 @@ class pairedboxes with ChangeNotifier {
     }
   }
 
-  Future<void> pairnewbox(BluetoothDevice device, String uid) async {
+  Future<void> pairnewbox(BluetoothDevice device, String uid,String authkey) async {
     print('here1');
 
     // print('here2');
@@ -67,7 +65,7 @@ class pairedboxes with ChangeNotifier {
     // }
 
     http.Response res = await http.post(
-        'https://wardlabs.firebaseio.com/$uid/paireddevices.json',
+        'https://wardlabs.firebaseio.com/$uid/paireddevices.json?auth=$authkey',
         body: json.encode(
             {'deviceid': device.id.toString(), 'devicename': device.name}));
     print('here2');
@@ -81,10 +79,10 @@ class pairedboxes with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> unpairbox(BluetoothDevice deletebox,String uid) async {
+  Future<void> unpairbox(BluetoothDevice deletebox, String uid,String authkey) async {
     int index = -1;
     String temp = '';
-    var templist = await getListOfpairedBoxes(uid);
+    var templist = await getListOfpairedBoxes(uid,authkey);
     for (int i = 0; i < templist.length; i++) {
       print(deletebox.id.toString());
       print(templist[i].id);
@@ -98,15 +96,17 @@ class pairedboxes with ChangeNotifier {
     print(templist.length);
     if (index >= 0) {
       try {
-        await http.delete(
-            'https://wardlabs.firebaseio.com/$uid/paireddevices/$temp.json');
+       var res= await http.delete(
+            'https://wardlabs.firebaseio.com/$uid/paireddevices/$temp.json?auth=$authkey}');
+            
       } catch (error) {
         print(error.toString());
       }
-     var removed=listofpairedboxes.removeAt(index);
-     print('removed:$removed');
-      notifyListeners();
+      var removed = listofpairedboxes.removeAt(index);
+      print('removed:$removed');
+    
     }
+    notifyListeners();
   }
 
   bool checkduplicateboxes(BluetoothDevice b) {
