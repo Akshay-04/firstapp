@@ -45,7 +45,21 @@ class _deviceInformationforpaireddevicesState
         ModalRoute.of(context).settings.arguments as Map<String, Object>;
     thisdevice = args['selecteddevice'];
 
-    return StreamBuilder<BluetoothDeviceState>(
+    return Scaffold(
+                    appBar: PreferredSize(
+                        preferredSize:
+                            Size.fromHeight(60), // here the desired height
+                        child: AppBar(
+                          title: Text(thisdevice.name),
+                          elevation: 10,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(
+                              bottom: Radius.circular(30),
+                            ),
+                          ),
+                          centerTitle: true,
+                        )),
+                    body:StreamBuilder<BluetoothDeviceState>(
       stream: thisdevice.state,
       initialData: BluetoothDeviceState.connecting,
       builder:
@@ -64,27 +78,13 @@ class _deviceInformationforpaireddevicesState
               future: func,
               initialData: [],
               builder: (BuildContext context, AsyncSnapshot snapshot) {
-                return Scaffold(
-                    appBar: PreferredSize(
-                        preferredSize:
-                            Size.fromHeight(60), // here the desired height
-                        child: AppBar(
-                          title: Text(thisdevice.name),
-                          elevation: 10,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.vertical(
-                              bottom: Radius.circular(30),
-                            ),
-                          ),
-                          centerTitle: true,
-                        )),
-                    body: Container(
+                return  Container(
                         child: isLoading
                             ? Center(child: CircularProgressIndicator())
                             : Card(
                                 child: Column(children: <Widget>[
                                   RaisedButton(
-                                      child: Text('Unpair'),
+                                      child: Text('Delete Box'),
                                       onPressed: () async {
                                         setState(() {
                                           isLoading = true;
@@ -107,7 +107,7 @@ class _deviceInformationforpaireddevicesState
                                         Navigator.pop(context);
                                       }),
                                   RaisedButton(
-                                    child: Text('On'),
+                                    child: Text('Open Box'),
                                     onPressed: () {
                                       try {
                                         _services[2]
@@ -124,7 +124,7 @@ class _deviceInformationforpaireddevicesState
                                     },
                                   ),
                                   RaisedButton(
-                                      child: Text('Off'),
+                                      child: Text('Close Box'),
                                       onPressed: () {
                                         try {
                                           _services[2]
@@ -142,14 +142,14 @@ class _deviceInformationforpaireddevicesState
                                 ]),
                                 elevation: 20,
                               ),
-                        width: double.infinity));
+                        width: double.infinity);
                 ;
               },
             );
           }
         }
       },
-    );
+    ));
     // FutureBuilder<BluetoothService>(
     //   future: func,
     //   initialData: [],

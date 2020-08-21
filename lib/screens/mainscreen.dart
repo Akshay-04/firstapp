@@ -80,12 +80,12 @@ class mainscreenState extends State<mainscreen> {
               items: [
                 BottomNavyBarItem(
                   icon: Icon(Icons.home),
-                  inactiveColor: Theme.of(context).primaryColor,
+                  inactiveColor: Colors.blueGrey,
                   title: Text('Home'),
                   activeColor: Theme.of(context).accentColor,
                 ),
                 BottomNavyBarItem(
-                    inactiveColor: Theme.of(context).primaryColor,
+                    inactiveColor: Colors.blueGrey,
                     icon: Icon(Icons.settings),
                     title: Text('Settings'),
                     activeColor: Theme.of(context).accentColor),
