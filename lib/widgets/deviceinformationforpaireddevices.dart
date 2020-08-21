@@ -18,94 +18,220 @@ class deviceInformationforpaireddevices extends StatefulWidget {
 
 class _deviceInformationforpaireddevicesState
     extends State<deviceInformationforpaireddevices> {
-  bool isLoading = false;
-  Widget build(BuildContext context) {
-    // bool _paired(BluetoothDevice device) {
-    //   List<BluetoothDevice> temp =
-    //       Provider.of<pairedboxes>(context).listofpairedboxes;
-    //   for (int i = 0; i < temp.length; i++) {
-    //     if (device.id == temp[i].id) {
-    //       return true;
-    //     }
-    //   }
-    //   return false;
-    // }
+  BluetoothDevice thisdevice;
+  List<BluetoothService> _services;
 
+  bool isLoading = false;
+  Future<List<BluetoothService>> get func async {
+    try {
+      await thisdevice.connect();
+    } catch (e) {
+      if (e.code != 'already_connected') {
+        throw e;
+      }
+    }
+    _services = await thisdevice.discoverServices();
+    return _services;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    func;
+  }
+
+  Widget build(BuildContext context) {
     final args =
         ModalRoute.of(context).settings.arguments as Map<String, Object>;
-    BluetoothDevice thisdevice = args['selecteddevice'];
-    List<BluetoothService> _services = args['services'];
-    return Scaffold(
-        appBar: PreferredSize(
-            preferredSize: Size.fromHeight(60), // here the desired height
-            child: AppBar(
-              title: Text(thisdevice.name),
-              elevation: 10,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(
-                  bottom: Radius.circular(30),
-                ),
-              ),
-              centerTitle: true,
-            )),
-        body: Container(
-            child: isLoading
-                ? Center(child: CircularProgressIndicator())
-                : Card(
-                    child: Column(children: <Widget>[
-                      RaisedButton(
-                          child: Text('Unpair'),
-                          onPressed: () async {
-                            setState(() {
-                              isLoading = true;
-                            });
-                            String uid=Provider.of<authentiation>(context,listen: false).getuid();
-                             String authkey = Provider.of<authentiation>(context,listen: false).authkey;
-                            await Provider.of<pairedboxes>(context,
-                                    listen: false)
-                                .unpairbox(thisdevice,uid,authkey);
-                            setState(() {
-                              isLoading = false;
-                            });
-                            Navigator.pop(context);
-                          }),
-                      RaisedButton(
-                        child: Text('On'),
-                        onPressed: () {
-                     
-                          try {
-                            _services[2]
-                                .characteristics[0]
-                                .write(utf8.encode('ON'));
-                          } catch (error) {
-                            showDialog(
-                                context: context,
-                                child: AlertDialog(
-                                  title: Text('error'),
-                                  content: Text(error.toString()),
-                                ));
-                          }
-                        },
-                      ),
-                      RaisedButton(
-                          child: Text('Off'),
-                          onPressed: () {
-                            try {
-                              _services[2]
-                                  .characteristics[0]
-                                  .write(utf8.encode('OFF'));
-                            } catch (error) {
-                              showDialog(
-                                  context: context,
-                                  child: AlertDialog(
-                                    title: Text('error'),
-                                    content: Text(error.toString()),
-                                  ));
-                            }
-                          })
-                    ]),
-                    elevation: 20,
-                  ),
-            width: double.infinity));
+    thisdevice = args['selecteddevice'];
+
+    return StreamBuilder<BluetoothDeviceState>(
+      stream: thisdevice.state,
+      initialData: BluetoothDeviceState.connecting,
+      builder:
+          (BuildContext context, AsyncSnapshot<BluetoothDeviceState> snapshot) {
+        if (snapshot.hasError) {
+          return Center(
+            child: Text('An error occured'),
+          );
+        } else if (snapshot.data == BluetoothDeviceState.disconnected) {
+          return Center(child:Text('Device Disconnected.Please switch on the box'));
+        } else {
+          if (snapshot.data == BluetoothDeviceState.connecting) {
+            return Center(child: CircularProgressIndicator());
+          } else {
+            return FutureBuilder<List<BluetoothService>>(
+              future: func,
+              initialData: [],
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                return Scaffold(
+                    appBar: PreferredSize(
+                        preferredSize:
+                            Size.fromHeight(60), // here the desired height
+                        child: AppBar(
+                          title: Text(thisdevice.name),
+                          elevation: 10,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(
+                              bottom: Radius.circular(30),
+                            ),
+                          ),
+                          centerTitle: true,
+                        )),
+                    body: Container(
+                        child: isLoading
+                            ? Center(child: CircularProgressIndicator())
+                            : Card(
+                                child: Column(children: <Widget>[
+                                  RaisedButton(
+                                      child: Text('Unpair'),
+                                      onPressed: () async {
+                                        setState(() {
+                                          isLoading = true;
+                                        });
+                                        String uid = Provider.of<authentiation>(
+                                                context,
+                                                listen: false)
+                                            .getuid();
+                                        String authkey =
+                                            Provider.of<authentiation>(context,
+                                                    listen: false)
+                                                .authkey;
+                                        await Provider.of<pairedboxes>(context,
+                                                listen: false)
+                                            .unpairbox(
+                                                thisdevice, uid, authkey);
+                                        setState(() {
+                                          isLoading = false;
+                                        });
+                                        Navigator.pop(context);
+                                      }),
+                                  RaisedButton(
+                                    child: Text('On'),
+                                    onPressed: () {
+                                      try {
+                                        _services[2]
+                                            .characteristics[0]
+                                            .write(utf8.encode('ON'));
+                                      } catch (error) {
+                                        showDialog(
+                                            context: context,
+                                            child: AlertDialog(
+                                              title: Text('error'),
+                                              content: Text(error.toString()),
+                                            ));
+                                      }
+                                    },
+                                  ),
+                                  RaisedButton(
+                                      child: Text('Off'),
+                                      onPressed: () {
+                                        try {
+                                          _services[2]
+                                              .characteristics[0]
+                                              .write(utf8.encode('OFF'));
+                                        } catch (error) {
+                                          showDialog(
+                                              context: context,
+                                              child: AlertDialog(
+                                                title: Text('error'),
+                                                content: Text(error.toString()),
+                                              ));
+                                        }
+                                      })
+                                ]),
+                                elevation: 20,
+                              ),
+                        width: double.infinity));
+                ;
+              },
+            );
+          }
+        }
+      },
+    );
+    // FutureBuilder<BluetoothService>(
+    //   future: func,
+    //   initialData: [],
+    //   builder: (BuildContext context, AsyncSnapshot snapshot) {
+    //     return Scaffold(
+    //         appBar: PreferredSize(
+    //             preferredSize: Size.fromHeight(60), // here the desired height
+    //             child: AppBar(
+    //               title: Text(thisdevice.name),
+    //               elevation: 10,
+    //               shape: RoundedRectangleBorder(
+    //                 borderRadius: BorderRadius.vertical(
+    //                   bottom: Radius.circular(30),
+    //                 ),
+    //               ),
+    //               centerTitle: true,
+    //             )),
+    //         body: Container(
+    //             child: isLoading
+    //                 ? Center(child: CircularProgressIndicator())
+    //                 : Card(
+    //                     child: Column(children: <Widget>[
+    //                       RaisedButton(
+    //                           child: Text('Unpair'),
+    //                           onPressed: () async {
+    //                             setState(() {
+    //                               isLoading = true;
+    //                             });
+    //                             String uid = Provider.of<authentiation>(context,
+    //                                     listen: false)
+    //                                 .getuid();
+    //                             String authkey = Provider.of<authentiation>(
+    //                                     context,
+    //                                     listen: false)
+    //                                 .authkey;
+    //                             await Provider.of<pairedboxes>(context,
+    //                                     listen: false)
+    //                                 .unpairbox(thisdevice, uid, authkey);
+    //                             setState(() {
+    //                               isLoading = false;
+    //                             });
+    //                             Navigator.pop(context);
+    //                           }),
+    //                       RaisedButton(
+    //                         child: Text('On'),
+    //                         onPressed: () {
+    //                           try {
+    //                             _services[2]
+    //                                 .characteristics[0]
+    //                                 .write(utf8.encode('ON'));
+    //                           } catch (error) {
+    //                             showDialog(
+    //                                 context: context,
+    //                                 child: AlertDialog(
+    //                                   title: Text('error'),
+    //                                   content: Text(error.toString()),
+    //                                 ));
+    //                           }
+    //                         },
+    //                       ),
+    //                       RaisedButton(
+    //                           child: Text('Off'),
+    //                           onPressed: () {
+    //                             try {
+    //                               _services[2]
+    //                                   .characteristics[0]
+    //                                   .write(utf8.encode('OFF'));
+    //                             } catch (error) {
+    //                               showDialog(
+    //                                   context: context,
+    //                                   child: AlertDialog(
+    //                                     title: Text('error'),
+    //                                     content: Text(error.toString()),
+    //                                   ));
+    //                             }
+    //                           })
+    //                     ]),
+    //                     elevation: 20,
+    //                   ),
+    //             width: double.infinity));
+    //     ;
+    //   },
+    // );
   }
 }

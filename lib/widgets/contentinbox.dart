@@ -24,7 +24,7 @@ class contentInBoxState extends State<contentInBox> {
       Navigator.of(ctx).pushNamed(deviceInformationforpaireddevices.routeName,
           arguments: {
             'selecteddevice': widget.device,
-            'services': widget._services
+            
           });
     }
     if (widget.index == 1) {
@@ -35,18 +35,7 @@ class contentInBoxState extends State<contentInBox> {
     }
   }
 
-  Future<void> get func async {
-    await flutterBlue.stopScan();
-    try {
-      await widget.device.connect();
-    } catch (e) {
-      if (e.code != 'already_connected') {
-        throw e;
-      }
-    } finally {
-      widget._services = await widget.device.discoverServices();
-    }
-  }
+  
 
   Widget build(BuildContext context) {
     Random random = new Random();
@@ -54,9 +43,10 @@ class contentInBoxState extends State<contentInBox> {
     Map<String, Object> select =
         listofcontainers[random.nextInt(listofcontainers.length)];
     return InkWell(
-        onTap: () async {
+        onTap: ()  async{
+          await flutterBlue.stopScan();
           TransitionToDeviceDetail(context);
-          await func;
+          
           
         },
         child: Container(
