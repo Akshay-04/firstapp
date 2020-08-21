@@ -53,15 +53,11 @@ class contentInBoxState extends State<contentInBox> {
     bool loading = false;
     Map<String, Object> select =
         listofcontainers[random.nextInt(listofcontainers.length)];
-    if (loading)
-      return Center(
-        child: CircularProgressIndicator(),
-      );
-    else  
     return InkWell(
         onTap: () async {
-          await func;
           TransitionToDeviceDetail(context);
+          await func;
+          
         },
         child: Container(
             height: MediaQuery.of(context).size.height * 0.4,

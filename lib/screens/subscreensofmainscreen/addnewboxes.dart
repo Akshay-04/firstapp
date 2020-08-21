@@ -103,20 +103,49 @@ class _FindDevicesScreenState extends State<FindDevicesScreen> {
     FlutterBlue.instance
         .startScan(timeout: Duration(seconds: 2))
         .then((value) => FlutterBlue.instance.stopScan());
- 
+    FlutterBlue.instance.connectedDevices.then((value) {
+      value.forEach((element) {
+        element.disconnect();
+      });
+    });
   }
 
   @override
   void dispose() {
     super.dispose();
     FlutterBlue.instance.stopScan();
-    print('stopped scan');
+  
   }
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
+    return Consumer<pairedboxes>(
+      builder: (context, value, child) {
+        return Wrap(
       children: [
+        // FutureBuilder<List<BluetoothDevice>>(
+        //   future: FlutterBlue.instance.connectedDevices,
+        //   initialData: [],
+        //   builder: (BuildContext context,
+        //       AsyncSnapshot<List<BluetoothDevice>> snapshot) {
+        //     if (snapshot.connectionState == ConnectionState.waiting) {
+        //       return Center(
+        //         child: CircularProgressIndicator(),
+        //       );
+        //     } else {
+        //       if (snapshot.hasError) {
+        //         return Center(
+        //           child: Text("Something went wrong"),
+        //         );
+        //       } else {
+        //         return Column(
+        //             children: snapshot.data.map((element) {
+        //           return contentInBox(element, 1);
+        //         }).toList());
+        //       }
+        //     }
+        //   },
+        // ),
         StreamBuilder<List<ScanResult>>(
             stream: FlutterBlue.instance.scanResults,
             initialData: [],
@@ -134,23 +163,9 @@ class _FindDevicesScreenState extends State<FindDevicesScreen> {
                   return Center(
                     child: Text('Done!'),
                   );
-                } else if (snapshot.data.isEmpty) {
-                  return Center(
-                    child: Text('Empty'),
-                  );
                 } else if (snapshot.connectionState == ConnectionState.active) {
                   var Scanresult = snapshot.data ?? [];
-                  Scanresult.retainWhere((element) {
-                    for (int i = 0;
-                        i < widget.listofalreadypairedboxid.length;
-                        i++) {
-                      if (element.device.id.toString() ==
-                          widget.listofalreadypairedboxid[i].deviceid) {
-                        return false;
-                      }
-                    }
-                    return true;
-                  });
+
                   Scanresult.retainWhere((element) {
                     if (element.device.name.isNotEmpty) {
                       return true;
@@ -158,15 +173,52 @@ class _FindDevicesScreenState extends State<FindDevicesScreen> {
                       return false;
                     }
                   });
-                  Provider.of<pairedboxes>(context);
-                  return Column(
-                      children: Scanresult.map((e) {
-                    return contentInBox(e.device, 1) as Widget;
-                  }).toList());
+                 return FutureBuilder<List<MyBox>>(
+                    future: Provider.of<pairedboxes>(context)
+                        .getListOfpairedBoxes(
+                            Provider.of<authentiation>(context).getuid(),
+                            Provider.of<authentiation>(context).authkey),
+                    initialData: [],
+                    builder: (BuildContext context,
+                        AsyncSnapshot<List<MyBox>> snapshotofpaired) {
+                      if (snapshotofpaired.connectionState ==
+                          ConnectionState.waiting) {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else {
+                        if (snapshotofpaired.hasError) {
+                          return Center(
+                            child: Text('Something went wrong'),
+                          );
+                        } else {
+                          if (snapshotofpaired.data.isNotEmpty) {
+                            snapshot.data.retainWhere((element) {
+                              for (int i = 0;
+                                  i < snapshotofpaired.data.length;
+                                  i++) {
+                                if (element.device.id.toString() ==
+                                    snapshotofpaired.data[i].deviceid) {
+                                  return false;
+                                }
+                              }
+                              return true;
+                            });
+                          }
+                          return Column(
+                              children: Scanresult.map((e) {
+                            return contentInBox(e.device, 1);
+                          }).toList());
+                        }
+                      }
+                    },
+                  );
                 }
               }
             }),
       ],
+    );
+      },
     );
   }
 }

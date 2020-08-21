@@ -25,14 +25,12 @@ class _SignupState extends State<Signup> {
   }
 
   void saveform() {
-    //print(pass);
+    
     if (!_key.currentState.validate()) {
       return;
     }
     _key.currentState.save();
-    print(au['email']);
-    print(au['password']);
-    print(pass);
+   
   }
 
   Widget build(BuildContext context) {
@@ -98,8 +96,8 @@ class _SignupState extends State<Signup> {
                     if (value.isEmpty) {
                       return 'field required';
                     }
-                    print(pass);
-                    print(au['password']);
+                  
+                   
                     if (pass != au['password']) {
                       return 'password must match';
                     }

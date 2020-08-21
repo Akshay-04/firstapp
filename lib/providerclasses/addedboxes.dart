@@ -21,23 +21,22 @@ class pairedboxes with ChangeNotifier {
     listofpairedboxes = List<MyBox>();
   }
   Future<List<MyBox>> getListOfpairedBoxes(String uid,String authkey) async {
-    // listofpairedboxes = [];
+     listofpairedboxes = [];
     var res;
     try {
       res = await http
           .get('https://wardlabs.firebaseio.com/$uid/paireddevices.json?auth=$authkey');
     } catch (error) {
-      print(error.toString());
+  
     }
 
     var temp = json.decode(res.body) as Map<String, dynamic>;
-    print(temp);
+   
     if (temp != null) {
       temp.forEach((key, value) {
-        print(value);
+      
         listofpairedboxes.add(MyBox(key, value['deviceid'].toString()));
       });
-      notifyListeners();
     }
     return [...listofpairedboxes];
   }
@@ -51,9 +50,9 @@ class pairedboxes with ChangeNotifier {
   }
 
   Future<void> pairnewbox(BluetoothDevice device, String uid,String authkey) async {
-    print('here1');
+ 
 
-    // print('here2');
+    
     // try {
     //   Future<DocumentReference> idgenerated = Firestore.instance
     //       .collection('users')
@@ -68,14 +67,14 @@ class pairedboxes with ChangeNotifier {
         'https://wardlabs.firebaseio.com/$uid/paireddevices.json?auth=$authkey',
         body: json.encode(
             {'deviceid': device.id.toString(), 'devicename': device.name}));
-    print('here2');
+    
 
     listofpairedboxes
         .add(MyBox(json.decode(res.body)['Name'], device.id.toString()));
     listofpairedboxes
         .add(MyBox(json.decode(res.body)['Name'], device.id.toString()));
-    print('paired:');
-    print(listofpairedboxes.length);
+    
+    
     notifyListeners();
   }
 
@@ -84,26 +83,25 @@ class pairedboxes with ChangeNotifier {
     String temp = '';
     var templist = await getListOfpairedBoxes(uid,authkey);
     for (int i = 0; i < templist.length; i++) {
-      print(deletebox.id.toString());
-      print(templist[i].id);
+    
       if (deletebox.id.toString() == templist[i].deviceid) {
         index = i;
         temp = templist[i].id;
       } else {
-        print(templist[i].id.toString());
+     
       }
     }
-    print(templist.length);
+
     if (index >= 0) {
       try {
        var res= await http.delete(
             'https://wardlabs.firebaseio.com/$uid/paireddevices/$temp.json?auth=$authkey}');
             
       } catch (error) {
-        print(error.toString());
+       
       }
       var removed = listofpairedboxes.removeAt(index);
-      print('removed:$removed');
+      
     
     }
     notifyListeners();

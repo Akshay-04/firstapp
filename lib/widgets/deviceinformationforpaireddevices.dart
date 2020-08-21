@@ -72,7 +72,7 @@ class _deviceInformationforpaireddevicesState
                       RaisedButton(
                         child: Text('On'),
                         onPressed: () {
-                          print(_services);
+                     
                           try {
                             _services[2]
                                 .characteristics[0]

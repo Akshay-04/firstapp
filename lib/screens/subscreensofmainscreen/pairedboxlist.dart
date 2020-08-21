@@ -12,7 +12,7 @@ class boxlist extends StatefulWidget {
   static String routename = '/pairedboxes';
   List<BluetoothDevice> devicesList = new List<BluetoothDevice>();
   int index;
-  boxlist(this.index);
+  boxlist(this.index, Key key) : super(key: key);
   @override
   boxliststate createState() => boxliststate();
 }
@@ -47,42 +47,54 @@ class boxliststate extends State<boxlist> {
     });
     flutterBlue.startScan();
   }
-@override
-void didChangeDependencies() {
-  super.didChangeDependencies();
-     String uid = Provider.of<authentiation>(context).getuid();
-     String authkey = Provider.of<authentiation>(context).authkey;
-    Provider.of<pairedboxes>(context).getListOfpairedBoxes(uid,authkey).then((value) {
-      setState(() {
-        paireddevices = value;
-      });
-    });
-}
-  Wrap _buildListViewOfDevices(List<BluetoothDevice> temp) {
-    Provider.of<pairedboxes>(context);
 
+  Wrap _buildListViewOfDevices(List<BluetoothDevice> t) {
     return Wrap(
-        children: temp.map((e) {
+        children: t.map((e) {
       return contentInBox(e, widget.index);
     }).toList());
   }
 
   Widget build(BuildContext context) {
-    print('paired devices');
-    paireddevices.forEach((element) {
-      print(element.deviceid);
-    });
-    List<BluetoothDevice> temp = [...widget.devicesList];
-    print(temp.length);
-    temp.retainWhere((element) {
-      for (int i = 0; i < paireddevices.length; i++) {
-        if (element.id.toString() == paireddevices[i].deviceid) {
-          return true;
-        }
-      }
-      return false;
-    });
+    List<BluetoothDevice> temp;
+  
 
-    return _buildListViewOfDevices(temp);
+    return FutureBuilder<List<MyBox>>(
+      future: Provider.of<pairedboxes>(context).getListOfpairedBoxes(
+          Provider.of<authentiation>(context).getuid(),
+          Provider.of<authentiation>(context).authkey),
+      initialData: [],
+      builder: (BuildContext context, AsyncSnapshot<List<MyBox>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (snapshot.hasError) {
+          return Center(
+            child: Text(snapshot.error.toString()),
+          );
+        } else {
+          
+          snapshot.data.forEach((element) {
+            
+          });
+          temp = [...widget.devicesList];
+        
+          if (snapshot.data.isNotEmpty) {
+            temp.retainWhere((element) {
+              for (int i = 0; i < snapshot.data.length; i++) {
+                if (element.id.toString() == snapshot.data[i].deviceid) {
+                  return true;
+                }
+              }
+              return false;
+            });
+          } else {
+            temp = [];
+          }
+          return _buildListViewOfDevices(temp);
+        }
+      },
+    );
   }
 }
