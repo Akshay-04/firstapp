@@ -24,7 +24,6 @@ class contentInBoxState extends State<contentInBox> {
       Navigator.of(ctx).pushNamed(deviceInformationforpaireddevices.routeName,
           arguments: {
             'selecteddevice': widget.device,
-            
           });
     }
     if (widget.index == 1) {
@@ -39,7 +38,6 @@ class contentInBoxState extends State<contentInBox> {
 
   Widget build(BuildContext context) {
     Random random = new Random();
-    bool loading = false;
     Map<String, Object> select =
         listofcontainers[random.nextInt(listofcontainers.length)];
     return InkWell(

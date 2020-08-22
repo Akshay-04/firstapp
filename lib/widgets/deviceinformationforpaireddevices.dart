@@ -37,99 +37,111 @@ class _deviceInformationforpaireddevicesState
   @override
   void initState() {
     super.initState();
-    func;
+    Future.delayed(Duration(seconds: 0)).then((_) {
+      final args =
+          ModalRoute.of(context).settings.arguments as Map<String, Object>;
+      thisdevice = args['selecteddevice'];
+      func;
+    });
   }
 
   Widget build(BuildContext context) {
     final args =
         ModalRoute.of(context).settings.arguments as Map<String, Object>;
     thisdevice = args['selecteddevice'];
-
     return Scaffold(
-                    appBar: PreferredSize(
-                        preferredSize:
-                            Size.fromHeight(60), // here the desired height
-                        child: AppBar(
-                          title: Text(thisdevice.name),
-                          elevation: 10,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.vertical(
-                              bottom: Radius.circular(30),
-                            ),
-                          ),
-                          centerTitle: true,
-                        )),
-                    body:StreamBuilder<BluetoothDeviceState>(
-      stream: thisdevice.state,
-      initialData: BluetoothDeviceState.connecting,
-      builder:
-          (BuildContext context, AsyncSnapshot<BluetoothDeviceState> snapshot) {
-        if (snapshot.hasError) {
-          return Center(
-            child: Text('An error occured'),
-          );
-        } else if (snapshot.data == BluetoothDeviceState.disconnected) {
-          return Center(child:Text('Device Disconnected.Please switch on the box'));
-        } else {
-          if (snapshot.data == BluetoothDeviceState.connecting) {
-            return Center(child: CircularProgressIndicator());
-          } else {
-            return FutureBuilder<List<BluetoothService>>(
-              future: func,
-              initialData: [],
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                return  Container(
-                        child: isLoading
-                            ? Center(child: CircularProgressIndicator())
-                            : Card(
-                                child: Column(children: <Widget>[
-                                  RaisedButton(
-                                      child: Text('Delete Box'),
-                                      onPressed: () async {
-                                        setState(() {
-                                          isLoading = true;
-                                        });
-                                        String uid = Provider.of<authentiation>(
-                                                context,
-                                                listen: false)
-                                            .getuid();
-                                        String authkey =
-                                            Provider.of<authentiation>(context,
-                                                    listen: false)
-                                                .authkey;
-                                        await Provider.of<pairedboxes>(context,
-                                                listen: false)
-                                            .unpairbox(
-                                                thisdevice, uid, authkey);
-                                        setState(() {
-                                          isLoading = false;
-                                        });
-                                        Navigator.pop(context);
-                                      }),
-                                  RaisedButton(
-                                    child: Text('Open Box'),
-                                    onPressed: () {
-                                      try {
-                                        _services[2]
-                                            .characteristics[0]
-                                            .write(utf8.encode('ON'));
-                                      } catch (error) {
-                                        showDialog(
-                                            context: context,
-                                            child: AlertDialog(
-                                              title: Text('error'),
-                                              content: Text(error.toString()),
-                                            ));
-                                      }
-                                    },
-                                  ),
-                                  RaisedButton(
-                                      child: Text('Close Box'),
+        appBar: PreferredSize(
+            preferredSize: Size.fromHeight(60), // here the desired height
+            child: AppBar(
+              title: Text(thisdevice.name),
+              elevation: 10,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(
+                  bottom: Radius.circular(30),
+                ),
+              ),
+              centerTitle: true,
+            )),
+        body: StreamBuilder<BluetoothDeviceState>(
+          stream: thisdevice.state,
+          initialData: BluetoothDeviceState.connecting,
+          builder: (BuildContext context,
+              AsyncSnapshot<BluetoothDeviceState> snapshot) {
+            if (snapshot.hasError) {
+              return Center(
+                child: Text('An error occured'),
+              );
+            } else if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else {
+              if (snapshot.data == BluetoothDeviceState.disconnected) {
+                return Center(child: CircularProgressIndicator());
+              }
+              if (snapshot.data == BluetoothDeviceState.connecting) {
+                return Center(child: CircularProgressIndicator());
+              } else {
+                return FutureBuilder<List<BluetoothService>>(
+                  future: func,
+                  initialData: [],
+                  builder: (BuildContext context,
+                      AsyncSnapshot snapshotofpaireddevices) {
+                    if (snapshotofpaireddevices.hasError) {
+                      return Text('An error occured');
+                    }
+                    if (snapshotofpaireddevices.connectionState ==
+                        ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    } else {
+                      return Container(
+                          child: isLoading
+                              ? Center(child: CircularProgressIndicator())
+                              : Card(
+                                  child: Column(children: <Widget>[
+                                    RaisedButton(
+                                        child: Text('Delete Box'),
+                                        onPressed: () async {
+                                          // setState(() {
+                                          //   isLoading = true;
+                                          // });
+
+                                          String uid =
+                                              Provider.of<authentiation>(
+                                                      context,
+                                                      listen: false)
+                                                  .getuid();
+                                          String authkey =
+                                              Provider.of<authentiation>(
+                                                      context,
+                                                      listen: false)
+                                                  .authkey;
+                                                  showDialog(
+                                                context: context,
+                                                
+                                                child: AlertDialog(
+                                                  title: Center( child:CircularProgressIndicator()),
+                                                  
+                                                ));
+                                          await Provider.of<pairedboxes>(
+                                                  context,
+                                                  listen: false)
+                                              .unpairbox(
+                                                  thisdevice, uid, authkey)
+                                              .then((value) {
+                                            Navigator.of(context).pop();
+                                            Navigator.of(context).pop();
+                                          });
+                                            
+                                          // setState(() {
+                                          //   isLoading = false;
+                                          // });
+                                        }),
+                                    RaisedButton(
+                                      child: Text('Open Box'),
                                       onPressed: () {
                                         try {
                                           _services[2]
                                               .characteristics[0]
-                                              .write(utf8.encode('OFF'));
+                                              .write(utf8.encode('ON'));
                                         } catch (error) {
                                           showDialog(
                                               context: context,
@@ -138,18 +150,36 @@ class _deviceInformationforpaireddevicesState
                                                 content: Text(error.toString()),
                                               ));
                                         }
-                                      })
-                                ]),
-                                elevation: 20,
-                              ),
-                        width: double.infinity);
-                ;
-              },
-            );
-          }
-        }
-      },
-    ));
+                                      },
+                                    ),
+                                    RaisedButton(
+                                        child: Text('Close Box'),
+                                        onPressed: () {
+                                          try {
+                                            _services[2]
+                                                .characteristics[0]
+                                                .write(utf8.encode('OFF'));
+                                          } catch (error) {
+                                            showDialog(
+                                                context: context,
+                                                child: AlertDialog(
+                                                  title: Text('error'),
+                                                  content:
+                                                      Text(error.toString()),
+                                                ));
+                                          }
+                                        })
+                                  ]),
+                                  elevation: 20,
+                                ),
+                          width: double.infinity);
+                    }
+                  },
+                );
+              }
+            }
+          },
+        ));
     // FutureBuilder<BluetoothService>(
     //   future: func,
     //   initialData: [],
