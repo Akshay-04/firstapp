@@ -119,6 +119,7 @@ class _deviceInformationforpaireddevicesState
                                                 
                                                 child: AlertDialog(
                                                   title: Center( child:CircularProgressIndicator()),
+                                                  content: Text('Deleting Box'),
                                                   
                                                 ));
                                           await Provider.of<pairedboxes>(
@@ -180,88 +181,6 @@ class _deviceInformationforpaireddevicesState
             }
           },
         ));
-    // FutureBuilder<BluetoothService>(
-    //   future: func,
-    //   initialData: [],
-    //   builder: (BuildContext context, AsyncSnapshot snapshot) {
-    //     return Scaffold(
-    //         appBar: PreferredSize(
-    //             preferredSize: Size.fromHeight(60), // here the desired height
-    //             child: AppBar(
-    //               title: Text(thisdevice.name),
-    //               elevation: 10,
-    //               shape: RoundedRectangleBorder(
-    //                 borderRadius: BorderRadius.vertical(
-    //                   bottom: Radius.circular(30),
-    //                 ),
-    //               ),
-    //               centerTitle: true,
-    //             )),
-    //         body: Container(
-    //             child: isLoading
-    //                 ? Center(child: CircularProgressIndicator())
-    //                 : Card(
-    //                     child: Column(children: <Widget>[
-    //                       RaisedButton(
-    //                           child: Text('Unpair'),
-    //                           onPressed: () async {
-    //                             setState(() {
-    //                               isLoading = true;
-    //                             });
-    //                             String uid = Provider.of<authentiation>(context,
-    //                                     listen: false)
-    //                                 .getuid();
-    //                             String authkey = Provider.of<authentiation>(
-    //                                     context,
-    //                                     listen: false)
-    //                                 .authkey;
-    //                             await Provider.of<pairedboxes>(context,
-    //                                     listen: false)
-    //                                 .unpairbox(thisdevice, uid, authkey);
-    //                             setState(() {
-    //                               isLoading = false;
-    //                             });
-    //                             Navigator.pop(context);
-    //                           }),
-    //                       RaisedButton(
-    //                         child: Text('On'),
-    //                         onPressed: () {
-    //                           try {
-    //                             _services[2]
-    //                                 .characteristics[0]
-    //                                 .write(utf8.encode('ON'));
-    //                           } catch (error) {
-    //                             showDialog(
-    //                                 context: context,
-    //                                 child: AlertDialog(
-    //                                   title: Text('error'),
-    //                                   content: Text(error.toString()),
-    //                                 ));
-    //                           }
-    //                         },
-    //                       ),
-    //                       RaisedButton(
-    //                           child: Text('Off'),
-    //                           onPressed: () {
-    //                             try {
-    //                               _services[2]
-    //                                   .characteristics[0]
-    //                                   .write(utf8.encode('OFF'));
-    //                             } catch (error) {
-    //                               showDialog(
-    //                                   context: context,
-    //                                   child: AlertDialog(
-    //                                     title: Text('error'),
-    //                                     content: Text(error.toString()),
-    //                                   ));
-    //                             }
-    //                           })
-    //                     ]),
-    //                     elevation: 20,
-    //                   ),
-    //             width: double.infinity));
-    //     ;
-    //   },
-    // );
+ 
   }
 }
