@@ -99,7 +99,7 @@ void adddevice(BuildContext context, BluetoothDevice device) async {
         context: context,
         child: AlertDialog(
           title: Center(child: CircularProgressIndicator()),
-          content: Text('Adding Box'),
+          content: Text('Adding Box',textAlign: TextAlign.center),
         ));
 
     String uid = Provider.of<authentiation>(context, listen: false).getuid();

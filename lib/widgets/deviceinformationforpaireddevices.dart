@@ -143,7 +143,7 @@ void openbox(BuildContext context, List<BluetoothService> services) async {
       context: context,
       child: AlertDialog(
         title: Center(child: CircularProgressIndicator()),
-        content: Text('Closing Box', textAlign: TextAlign.center),
+        content: Text('Opening Box', textAlign: TextAlign.center),
       ));
   await services[2].characteristics[0].write(utf8.encode('ON'));
   Navigator.of(context).pop();
@@ -154,7 +154,7 @@ void closebox(BuildContext context, List<BluetoothService> services) async{
       context: context,
       child: AlertDialog(
         title: Center(child: CircularProgressIndicator()),
-        content: Text('Opening Box', textAlign: TextAlign.center),
+        content: Text('Closing Box', textAlign: TextAlign.center),
       ));
   await services[2].characteristics[0].write(utf8.encode('OFF'));
   Navigator.pop(context);
