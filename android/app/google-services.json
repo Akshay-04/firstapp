@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "394443313328",
+    "firebase_url": "https://wardlabs.firebaseio.com",
+    "project_id": "wardlabs",
+    "storage_bucket": "wardlabs.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:394443313328:android:e025732f6701e506abab75",
+        "android_client_info": {
+          "package_name": "com.example.wardlabs"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "394443313328-be89gvmv8eqaeckdhfe84g29bscglfa0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCKaaeNfQWnk-gwbcTGLWWLRE_PxWZBJZs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "394443313328-be89gvmv8eqaeckdhfe84g29bscglfa0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,62 +1,100 @@
-import 'package:wardlabs/providerclasses/basicbox.dart';
+import 'package:wardlabs/providerclasses/auth.dart';
 import 'package:wardlabs/widgets/contentinbox.dart';
 import 'package:provider/provider.dart';
+import '../../providerclasses/basicboxprev.dart';
 import 'package:flutter/material.dart';
 import '../../providerclasses/addedboxes.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
-class boxList extends StatefulWidget {
+List<MyBox> paireddevices = [];
+
+class boxlist extends StatefulWidget {
+  static String routename = '/pairedboxes';
+  List<BluetoothDevice> devicesList = new List<BluetoothDevice>();
   int index;
-  boxList(this.index);
+  boxlist(this.index, Key key) : super(key: key);
   @override
-  _boxListState createState() => _boxListState();
+  boxliststate createState() => boxliststate();
 }
 
-class _boxListState extends State<boxList> {
-  List<BluetoothDevice> listofalreadypairedboxes=[];
-  List<MyBox> listofalreadypairedboxid;
-  Future<void> getlist() async {
-    await flutterBlue.startScan( timeout: Duration(seconds: 2));
-
-     flutterBlue.scanResults.listen((results) {
-      // do something with scan results
-      for (ScanResult r in results) {
-        setState(() {
-          listofalreadypairedboxes.add(r.device);
-        });
-        
-      }
-    }).onDone(()async {await flutterBlue.stopScan(); });
-
-     
+class boxliststate extends State<boxlist> {
+  bool waiting = false;
+  _addDeviceTolist(final BluetoothDevice device) {
+    if (!widget.devicesList.contains(device)) {
+      setState(() {
+        widget.devicesList.add(device);
+      });
+    }
   }
 
   @override
   void initState() {
- 
-   getlist().then((value) {
-      super.initState();
+    super.initState();
+
+    flutterBlue.connectedDevices
+        .asStream()
+        .listen((List<BluetoothDevice> devices) {
+      for (BluetoothDevice device in devices) {
+        _addDeviceTolist(device);
+      }
     });
+    flutterBlue.scanResults.listen((List<ScanResult> results) {
+      for (ScanResult result in results) {
+        if (result.device.name.isNotEmpty) {
+          _addDeviceTolist(result.device);
+        }
+      }
+    });
+    flutterBlue.startScan();
   }
 
-  @override
+  Wrap _buildListViewOfDevices(List<BluetoothDevice> t) {
+    return Wrap(
+        children: t.map((e) {
+      return contentInBox(e, widget.index);
+    }).toList());
+  }
+
   Widget build(BuildContext context) {
-    return Container(
-        child: GridView(
-      padding: EdgeInsets.all(25),
-      children: <Widget>[
-        if (listofalreadypairedboxes.isNotEmpty)
-          ...listofalreadypairedboxes.map((element) {
-            return contentInBox(element, widget.index);
-          }).toList()
-        else
-          Text('Empty'),
-      ],
-      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: 200,
-          childAspectRatio: 4 / 3,
-          crossAxisSpacing: 30,
-          mainAxisSpacing: 30),
-    ));
+    List<BluetoothDevice> temp;
+  
+
+    return FutureBuilder<List<MyBox>>(
+      future: Provider.of<pairedboxes>(context).getListOfpairedBoxes(
+          Provider.of<authentiation>(context).getuid(),
+          Provider.of<authentiation>(context).authkey),
+      initialData: [],
+      builder: (BuildContext context, AsyncSnapshot<List<MyBox>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (snapshot.hasError) {
+          return Center(
+            child: Text(snapshot.error.toString()),
+          );
+        } else {
+          
+          snapshot.data.forEach((element) {
+            
+          });
+          temp = [...widget.devicesList];
+        
+          if (snapshot.data.isNotEmpty) {
+            temp.retainWhere((element) {
+              for (int i = 0; i < snapshot.data.length; i++) {
+                if (element.id.toString() == snapshot.data[i].deviceid) {
+                  return true;
+                }
+              }
+              return false;
+            });
+          } else {
+            temp = [];
+          }
+          return _buildListViewOfDevices(temp);
+        }
+      },
+    );
   }
 }
