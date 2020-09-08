@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wardlabs/providerclasses/auth.dart';
 import 'package:wardlabs/screens/mainscreen.dart';
-import '../providerclasses/addedboxes.dart';
 import '../screens/subscreensofmainscreen/addnewboxes.dart';
 
 class drawerScreen extends StatelessWidget {
