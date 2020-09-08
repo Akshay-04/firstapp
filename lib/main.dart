@@ -52,15 +52,10 @@ class MyApp extends StatelessWidget {
                 Signup.routeName: (co) {
                   return Signup();
                 },
-                deviceInformationfornewdevices.routeName: (cont) {
-                  return deviceInformationfornewdevices();
-                },
                 settingscreen.routeName: (con) {
                   return settingscreen();
                 },
-                deviceInformationforpaireddevices.routeName: (cont) {
-                  return deviceInformationforpaireddevices();
-                },
+ 
                 addNewBox.routename: (context) {
                   return addNewBox();
                 }

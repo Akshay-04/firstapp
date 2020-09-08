@@ -19,33 +19,59 @@ class contentInBox extends StatefulWidget {
 }
 
 class contentInBoxState extends State<contentInBox> {
-  void TransitionToDeviceDetail(ctx) {
+  void TransitionToDeviceDetail(ctx,select) {
     if (widget.index == 0) {
-      Navigator.of(ctx).pushNamed(deviceInformationforpaireddevices.routeName,
-          arguments: {
-            'selecteddevice': widget.device,
-          });
+      showModalBottomSheet(
+  context: context,
+  isScrollControlled: true,
+  backgroundColor: Colors.transparent,
+  builder: (context) => Container(
+    height: MediaQuery.of(context).size.height * 0.4,
+    decoration: new BoxDecoration(
+      color: Colors.white,
+      borderRadius: new BorderRadius.only(
+        topLeft: const Radius.circular(25.0),
+        topRight: const Radius.circular(25.0),
+      ),
+    ),
+    child: Center(
+      child: deviceInformationforpaireddevices(widget.device, select),
+    ),
+  ),
+);
     }
+
     if (widget.index == 1) {
-      Navigator.of(ctx)
-          .pushNamed(deviceInformationfornewdevices.routeName, arguments: {
-        'selecteddevice': widget.device,
-      });
+      showModalBottomSheet(
+  context: context,
+  isScrollControlled: true,
+  backgroundColor: Colors.transparent,
+  builder: (context) => Container(
+    height: MediaQuery.of(context).size.height * 0.4,
+    decoration: new BoxDecoration(
+      color: Colors.white,
+      borderRadius: new BorderRadius.only(
+        topLeft: const Radius.circular(25.0),
+        topRight: const Radius.circular(25.0),
+      ),
+    ),
+    child: Center(
+      child:  deviceInformationfornewdevices(widget.device,select),
+    ),
+  ),
+);
+
     }
   }
-
-  
 
   Widget build(BuildContext context) {
     Random random = new Random();
     Map<String, Object> select =
         listofcontainers[random.nextInt(listofcontainers.length)];
     return InkWell(
-        onTap: ()  async{
+        onTap: () async {
           await flutterBlue.stopScan();
-          TransitionToDeviceDetail(context);
-          
-          
+          TransitionToDeviceDetail(context,select);
         },
         child: Container(
             height: MediaQuery.of(context).size.height * 0.4,
