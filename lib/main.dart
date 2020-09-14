@@ -4,9 +4,8 @@ import 'package:wardlabs/providerclasses/addedboxes.dart';
 import 'package:wardlabs/providerclasses/auth.dart';
 import 'package:wardlabs/providerclasses/basicboxprev.dart';
 import 'package:wardlabs/screens/signup.dart';
-import 'package:wardlabs/screens/subscreensofmainscreen/addnewboxes.dart';
-import 'package:wardlabs/widgets/deviceinformationfornewdevices.dart';
-import 'package:wardlabs/widgets/deviceinformationforpaireddevices.dart';
+
+
 import 'package:wardlabs/screens/mainscreen.dart';
 import 'package:wardlabs/screens/subscreensofmainscreen/settingscreen.dart';
 import 'package:provider/provider.dart';
@@ -55,10 +54,6 @@ class MyApp extends StatelessWidget {
                 settingscreen.routeName: (con) {
                   return settingscreen();
                 },
- 
-                addNewBox.routename: (context) {
-                  return addNewBox();
-                }
               },
             );
           },

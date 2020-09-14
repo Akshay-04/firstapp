@@ -2,7 +2,6 @@ import 'package:bubbled_navigation_bar/bubbled_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:wardlabs/providerclasses/addedboxes.dart';
-import 'package:wardlabs/screens/subscreensofmainscreen/addnewboxes.dart';
 import 'package:wardlabs/screens/subscreensofmainscreen/pairedboxlist.dart';
 import 'package:wardlabs/screens/drawerscreen.dart';
 import 'package:provider/provider.dart';
@@ -29,7 +28,7 @@ class mainscreenState extends State<mainscreen> {
 
   final List<Map<String, Object>> _screens = [
     {
-      'Title': 'Added Boxes',
+      'Title': 'Live Streaming',
       'screen': boxlist(0,UniqueKey()),
     },
     {
