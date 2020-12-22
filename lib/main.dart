@@ -1,67 +1,40 @@
 import 'package:flutter/material.dart';
-import 'package:wardlabs/ScreensforAuth/Screens/Welcome/welcome_screen.dart';
-import 'package:wardlabs/providerclasses/addedboxes.dart';
-import 'package:wardlabs/providerclasses/auth.dart';
-import 'package:wardlabs/providerclasses/basicboxprev.dart';
-import 'package:wardlabs/screens/signup.dart';
-import 'package:wardlabs/screens/subscreensofmainscreen/addnewboxes.dart';
-import 'package:wardlabs/widgets/deviceinformationfornewdevices.dart';
-import 'package:wardlabs/widgets/deviceinformationforpaireddevices.dart';
-import 'package:wardlabs/screens/mainscreen.dart';
-import 'package:wardlabs/screens/subscreensofmainscreen/settingscreen.dart';
-import 'package:provider/provider.dart';
+import 'dart:async';
 
-void main() {
-  runApp(MyApp());
+import 'package:flutter/services.dart';
+import 'package:image_viewer/image_viewer.dart';
+
+void main() => runApp(MyApp());
+
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
 }
 
-const kPrimaryColor = Color(0xFF6F35A5);
-const kPrimaryLightColor = Color(0xFFF1E6FF);
-
-//done
-class MyApp extends StatelessWidget {
+class _MyAppState extends State<MyApp> {
+  @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-        providers: [
-          ChangeNotifierProvider(
-            create: (context) {
-              return authentiation();
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('ImageViewer example app'),
+        ),
+        body: Center(
+          child: RaisedButton(
+            onPressed: () {
+              ImageViewer.showImageSlider(
+                images: [
+                  'https://cdn.eso.org/images/thumb300y/eso1907a.jpg',
+                  'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__340.jpg',
+                  'https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80',
+                ],
+                startingPosition: 1,
+              );
             },
+            child: Text('Show slider'),
           ),
-           ChangeNotifierProvider(
-            create: (context) {
-              return pairedboxes();
-            },)
-        ],
-        child: Consumer<authentiation>(
-          builder: (context, value, child) {
-            bool islogged = value.checktoken;
-            return MaterialApp(
-              key: UniqueKey(),
-              debugShowCheckedModeBanner: false,
-              theme: ThemeData(
-                primaryColor: Color.fromRGBO(255, 66, 85, 1),
-                accentColor: Color.fromRGBO(60, 250, 199, 1),
-                scaffoldBackgroundColor: Colors.white,
-              ),
-              home: islogged ? mainscreen(UniqueKey()) : WelcomeScreen(),
-              routes: {
-                mainscreen.routeName: (co) {
-                  return mainscreen(UniqueKey());
-                },
-                Signup.routeName: (co) {
-                  return Signup();
-                },
-                settingscreen.routeName: (con) {
-                  return settingscreen();
-                },
- 
-                addNewBox.routename: (context) {
-                  return addNewBox();
-                }
-              },
-            );
-          },
-        ));
+        ),
+      ),
+    );
   }
 }
