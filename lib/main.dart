@@ -1,32 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:image_viewer/image_viewer.dart';
 
 void main() => runApp(MyApp());
 
-class MyApp extends StatefulWidget {
-  @override
-  _MyAppState createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    var title = 'Web Images';
+
     return MaterialApp(
+      title: title,
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('ImageViewer example app'),
+          title: Text(title),
         ),
-        body: Center(
-          child: RaisedButton(
-            onPressed: () {
-              ImageViewer.showImageSlider(
-                images: ['http://192.168.43.56:8090/'],
-                startingPosition: 1,
-              );
-            },
-            child: Text('Show slider'),
-          ),
-        ),
+        body: Image.network('https://picsum.photos/250?image=9'),
       ),
     );
   }
