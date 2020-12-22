@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 
 void main() => runApp(MyApp());
 
@@ -13,7 +14,9 @@ class MyApp extends StatelessWidget {
         appBar: AppBar(
           title: Text(title),
         ),
-        body: Image.network('http://192.168.43.56:8090'),
+        body: Center(
+          child: HtmlWidget('Hello World!'),
+        ),
       ),
     );
   }
