@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
         appBar: AppBar(
           title: Text(title),
         ),
-        body: Image.network('http://192.168.43.56:8090/video_feed'),
+        body: Image.network('http://192.168.43.56:8090'),
       ),
     );
   }
